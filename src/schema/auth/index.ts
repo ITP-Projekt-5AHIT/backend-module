@@ -1,6 +1,13 @@
 import { coerce, object, string } from "zod";
 import validator from "validator";
 
+export const loginSchema = object({
+  body: object({
+    userName: string({ message: "Bitte gib einen Usernamen ein" }),
+    password: string({ message: "Bitte gib ein Passwort ein" }),
+  }),
+});
+
 export const signUpSchema = object({
   body: object({
     userName: string({ message: "Username muss enthalten sein" })

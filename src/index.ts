@@ -1,5 +1,6 @@
-import server from "./server";
+import app from "./server";
+import config from "./config/config";
 
-server.listen(3000, () => {
-  console.log("🚀 Server started on PORT 3000");
+export const server = app.listen(config.PORT, () => {
+  console.log(`🚀 Server started on PORT ${config.PORT}`);
 });
