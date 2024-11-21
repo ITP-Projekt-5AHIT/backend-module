@@ -1,22 +1,21 @@
-FROM node:18.16.0-alpine
-
-# Erstelle ein Arbeitsverzeichnis
+# FROM node:18.16.0-alpine
+# WORKDIR /app
+# COPY package*.json ./
+# RUN npm install
+# COPY . .
+# RUN npm run build
+# EXPOSE 3000
+# CMD ["npm", "run", "dev"]
+FROM node:18-alpine
 WORKDIR /app
-
-# Kopiere package.json und package-lock.json in das Arbeitsverzeichnis
+RUN npm install -g ts-node prisma
 COPY package*.json ./
-
-# Installiere die Abhängigkeiten
 RUN npm install
-
-# Kopiere den Rest des Projekts in den Container
+RUN npx prisma init
+COPY prisma/schema.prisma ./prisma/schema.prisma
+RUN npx prisma generate
 COPY . .
-
-# Baue TypeScript in JavaScript um
 RUN npm run build
-
-# Öffne Port 3000
+RUN mkdir -p /app/logs && touch /app/logs/requests.log
+CMD ["npm", "start"]
 EXPOSE 3000
-
-# Starte die Anwendung (aus ./src/index.ts)
-CMD ["npm", "run", "dev"]
