@@ -8,7 +8,7 @@ const transport = nodemailer.createTransport({
     user: config.EMAIL_FROM_ADDRESS,
     pass: config.EMAIL_PASSWORD,
   },
-  port: 587,
+  port: config.EMAIL_PORT,
 });
 
 export default transport;

@@ -14,10 +14,11 @@ datasource db {
 }
 
 model Account {
-  aId      Int    @id @unique @default(autoincrement())
-  userName String @unique
-  email    String @unique
+  aId      Int     @id @unique @default(autoincrement())
+  userName String  @unique
+  email    String  @unique
   password String
+  tokens   Token[]
 }
 
 model User {
@@ -25,4 +26,14 @@ model User {
   firstName   String
   lastName    String
   dateOfBirth DateTime
+}
+
+model Token {
+  tId     Int      @id @unique @default(autoincrement())
+  exp     BigInt
+  iat     BigInt
+  sub     String
+  type    String
+  aId     Int?
+  Account Account? @relation(fields: [aId], references: [aId])
 }

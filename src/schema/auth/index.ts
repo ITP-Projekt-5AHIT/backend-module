@@ -7,6 +7,20 @@ export const requestPasswordResetSchema = object({
   }),
 });
 
+export const setPasswordSchema = object({
+  body: object({
+    token: coerce
+      .number({ message: "Bitte gib die 6-stellige Nummer ein" })
+      .min(100_000, { message: "Zahl zu klein" })
+      .max(999_999, { message: "Zahl zu groß" }),
+    password: string({ message: "Bitte gib ein neues, starked Password ein" })
+      .max(256)
+      .refine((pwd) => validator.isStrongPassword(pwd), {
+        message: "Bitte verwende ein starkes Passwort",
+      }),
+  }),
+});
+
 export const loginSchema = object({
   body: object({
     userName: string({ message: "Bitte gib einen Usernamen ein" }),

@@ -3,17 +3,18 @@ import services from "../../services";
 import {
   loginType,
   passwordResetRequestType,
+  passwordSetType,
   signUpType,
 } from "../../types/auth";
 import {
   findAccountByCredentials,
   findAccountByUserName,
-  generateToken,
+  generatePwdResetToken,
   generateTokens,
+  handlePasswordReset,
 } from "../../services/auth";
 import catchAsync from "../../utils/catchAsync";
 import { sendPwdResetMail } from "../../services/mail/index";
-import { TOKEN_TYPE } from "../../types/token";
 
 export const postSignUp = catchAsync(
   async (
@@ -47,10 +48,16 @@ export const postRequestPasswordReset = catchAsync(
   ) => {
     const { userName } = req.params;
     const account = await findAccountByUserName(userName);
-    const resetToken = await generateToken(
-      account,
-      TOKEN_TYPE.PASSWORD_RESET_TOKEN
-    );
+    const resetToken = await generatePwdResetToken(account);
     await sendPwdResetMail(resetToken, account.email);
+    return res.status(200).json({ message: "Email wurde versendet" });
+  }
+);
+
+export const postPasswordReset = catchAsync(
+  async (req: Request<{}, {}, passwordSetType>, res, next) => {
+    const { token, password } = req.body;
+    await handlePasswordReset(`${token}`, password);
+    return res.status(200).json({ message: "Passwort wurde geändert" });
   }
 );

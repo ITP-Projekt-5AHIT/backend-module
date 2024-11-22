@@ -15,7 +15,7 @@ export const getExpirationTime = (type: TOKEN_TYPE) => {
     {
       type: TOKEN_TYPE.ACCESS_TOKEN,
       time: config.ACCESS_EXP_MINS,
-      format: "mins",
+      format: "minutes",
     },
     {
       type: TOKEN_TYPE.REFRESH_TOKEN,
@@ -25,14 +25,15 @@ export const getExpirationTime = (type: TOKEN_TYPE) => {
     {
       type: TOKEN_TYPE.PASSWORD_RESET_TOKEN,
       time: config.PWD_RESET_EXP_MINS,
-      format: "mins",
+      format: "minutes",
     },
   ].find((f) => f.type == type);
   assert(
     expTime,
     new ApiError(
       INTERNAL_SERVER_ERROR,
-      `No expiration type found for type ${type}`
+      `No expiration type found for type ${type}`,
+      `Beim Suchen der Ablaufzeit fuer den Token wurde ein falscher Wert mitgegeben`
     )
   );
   return lodash.omit(expTime, "type");

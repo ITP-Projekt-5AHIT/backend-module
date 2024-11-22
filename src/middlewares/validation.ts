@@ -15,7 +15,9 @@ export const validate =
       const validationError = parsed.error.errors?.at(0)?.message;
       const error: ApiError = new ApiError(
         BAD_REQUEST,
-        validationError ?? "Validation failed"
+        validationError ?? "Falsche Dateneingabe",
+        `Die Validierung ist gescheitert, ${parsed.error.message.toString()}`,
+        "ValidationError"
       );
       return next(error);
     }

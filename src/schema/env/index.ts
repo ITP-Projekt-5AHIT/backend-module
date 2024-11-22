@@ -1,4 +1,4 @@
-import { coerce, object, string } from "zod";
+import zod, { array, coerce, object, string } from "zod";
 
 export const envSchema = object({
   PORT: coerce.number({ message: "Bitte gib einen PORT an" }),
@@ -16,4 +16,9 @@ export const envSchema = object({
   EMAIL_HOST: string({ message: "Email Host fehlt" }),
   EMAIL_FROM_ADDRESS: string({ message: "Email from adress fehlt" }),
   EMAIL_PASSWORD: string({ message: "Email passwort fehlt" }),
+  DATABASE_URL: string({ message: "Datenbank URL fehlt" }),
+  EMAIL_PORT: coerce.number({ message: "Email Port muss angegeben werden" }),
+  NODE_ENV: zod.enum(["production", "development"], {
+    message: "NODE_ENV muss angegeben sein",
+  }),
 });

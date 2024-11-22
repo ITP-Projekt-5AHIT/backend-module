@@ -1,22 +1,25 @@
+import * as HttpStatus from "http-status";
+
 class ApiError extends Error {
-  declare readonly statusCode: number;
+  declare statusCode: number;
   declare isOperational: boolean;
   declare stack: string;
+  declare metaInfo: string;
+  declare status: string;
 
   constructor(
-    s: number,
+    statusCode: number,
     message: string,
-    isOperational: boolean = true,
-    stack = ""
+    metaInfo?: string,
+    name: string = "APIError",
+    isOperational: boolean = true
   ) {
     super(message);
-    this.statusCode = s;
+    this.statusCode = statusCode;
+    this.status = HttpStatus[statusCode as keyof typeof HttpStatus].toString();
     this.isOperational = isOperational;
-    this.name = "APIError";
-    this.stack = stack;
-    if (!this.stack) {
-      Error.captureStackTrace(this, this.constructor);
-    }
+    (this.name = name), (this.metaInfo = metaInfo ?? message);
+    if (!this.stack) Error.captureStackTrace(this, this.constructor);
   }
 }
 

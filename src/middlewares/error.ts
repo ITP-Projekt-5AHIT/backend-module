@@ -2,11 +2,34 @@ import { NextFunction, Request, Response } from "express";
 import ApiError from "../utils/apiError";
 import { server } from "../index";
 import db from "../utils/db";
-import { INTERNAL_SERVER_ERROR } from "http-status";
-import {
-  PrismaClientKnownRequestError,
-  PrismaClientValidationError,
-} from "@prisma/client/runtime/library";
+import httpStatus, { INTERNAL_SERVER_ERROR } from "http-status";
+import errorResponseType from "../types/error";
+import config from "../config/config";
+import { Prisma } from "@prisma/client";
+
+export const catchPrisma = async <T>(cb: () => T): Promise<T> => {
+  try {
+    return await cb();
+  } catch (err) {
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === "P2002"
+    ) {
+      let fieldFailed: string = (
+        (err.meta?.target?.toString() as string) ?? "unknown"
+      ).toLowerCase();
+      if (fieldFailed.length >= 1)
+        fieldFailed = `${fieldFailed
+          .substring(0, 1)
+          .toUpperCase()}${fieldFailed.substring(1)}`;
+      throw new ApiError(
+        httpStatus.IM_USED,
+        `${fieldFailed} ist leider bereits vergeben`
+      );
+    }
+    throw new ApiError(500, "Fehler bei der DB");
+  }
+};
 
 export const convertError = (
   err: Error,
@@ -16,27 +39,33 @@ export const convertError = (
 ) => {
   let error: Error | ApiError = err;
 
-  if (err instanceof PrismaClientValidationError) {
-    const validationError: PrismaClientValidationError = err;
-    error = new ApiError(
-      INTERNAL_SERVER_ERROR,
-      validationError.message.toString(),
-      true
-    );
-  }
+  // if (err instanceof PrismaClientValidationError) {
+  //   const validationError: PrismaClientValidationError = err;
+  //   error = new ApiError(
+  //     INTERNAL_SERVER_ERROR,
+  //     validationError.message.toString(),
+  //     true
+  //   );
+  // }
 
-  if (err instanceof PrismaClientKnownRequestError) {
-    const dbError: PrismaClientKnownRequestError = err;
-    error = new ApiError(
-      INTERNAL_SERVER_ERROR,
-      "Error occurred with db transaction;" +
-        ` code: ${dbError.code} | meta: ${dbError.meta} | message: ${dbError.message}`,
-      true
-    );
-  }
+  // if (err instanceof PrismaClientKnownRequestError) {
+  //   const dbError: PrismaClientKnownRequestError = err;
+  //   error = new ApiError(
+  //     INTERNAL_SERVER_ERROR,
+  //     "Error occurred with db transaction;" +
+  //       ` code: ${dbError.code} | meta: ${dbError.meta} | message: ${dbError.message}`,
+  //     true
+  //   );
+  // }
 
   if (!(err instanceof ApiError)) {
-    error = new ApiError(INTERNAL_SERVER_ERROR, err.message, false);
+    error = new ApiError(
+      INTERNAL_SERVER_ERROR,
+      err.message,
+      "Ein unbehandelter Fehler ist aufgetreten --> Service ist nicht länger operationsfähig",
+      "UnhandledError",
+      false
+    );
   }
 
   next(error);
@@ -48,19 +77,22 @@ export const handleError = async (
   res: Response,
   _next: NextFunction
 ) => {
-  console.error("handling error ");
   if (!err.isOperational) {
     await handleSevereErrors(err.message);
     return;
   }
   if (res.headersSent) return;
-  const errorFormat = {
-    error: true,
-    message: err.message,
+  const errorResponse: errorResponseType = {
     name: err.name,
+    message: err.message,
     statusCode: err.statusCode,
+    status: err.status,
   };
-  res.status(err.statusCode || INTERNAL_SERVER_ERROR).json(errorFormat);
+  if (config.NODE_ENV === "development") {
+    errorResponse.metaInfo = err.metaInfo;
+    errorResponse.stack = err.stack;
+  }
+  res.status(err.statusCode).json(errorResponse);
 };
 
 export const handleSevereErrors = async (e?: string) => {

@@ -1,6 +1,7 @@
 import {
   loginSchema,
   requestPasswordResetSchema,
+  setPasswordSchema,
   signUpSchema,
 } from "../schema/auth";
 
@@ -12,3 +13,6 @@ export type loginType = Zod.infer<loginSchemaType>;
 
 type passwordReset = typeof requestPasswordResetSchema.shape.params;
 export type passwordResetRequestType = Zod.infer<passwordReset>;
+
+type passwordSet = typeof setPasswordSchema.shape.body;
+export type passwordSetType = Zod.infer<passwordSet>;
