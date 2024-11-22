@@ -13,4 +13,7 @@ export const envSchema = object({
     message: "Die Ablaufzeit des password reset tokens muss angegeben werden",
   }),
   JWT_SECRET: string({ message: "Ein JWT Secret Key muss angegeben werden" }),
+  EMAIL_HOST: string({ message: "Email Host fehlt" }),
+  EMAIL_FROM_ADDRESS: string({ message: "Email from adress fehlt" }),
+  EMAIL_PASSWORD: string({ message: "Email passwort fehlt" }),
 });

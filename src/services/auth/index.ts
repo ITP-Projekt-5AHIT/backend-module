@@ -7,17 +7,24 @@ import { getExpirationTime, TOKEN_TYPE, tokenType } from "../../types/token";
 import dayjs, { ManipulateType } from "dayjs";
 import config from "../../config/config";
 import jwt from "jsonwebtoken";
+import ApiError from "../../utils/apiError";
 
 export const createAccount = async (accountData: signUpType) => {
+  const hashed = await bcrypt.hash(accountData.password, config.SALT);
+  const accountType: Omit<Account, "aId"> = {
+    email: accountData.email,
+    password: hashed,
+    userName: accountData.userName,
+  };
   const created = await db.account.create({
     data: {
-      ...accountData,
+      ...accountType,
     },
   });
   return created;
 };
 
-export const findAccount = async (credentials: loginType) => {
+export const findAccountByCredentials = async (credentials: loginType) => {
   const found = await db.account.findUnique({
     where: {
       userName: credentials.userName,
@@ -32,14 +39,24 @@ export const findAccount = async (credentials: loginType) => {
   return found;
 };
 
+export const findAccountByUserName = async (userName: string) => {
+  const found = await db.account.findUnique({
+    where: {
+      userName: userName,
+    },
+  });
+  assert(found != null, new ApiError(401, "Username oder Passwort falsch"));
+  return found;
+};
+
 export const generateToken = async (account: Account, type: TOKEN_TYPE) => {
   const { format, time } = getExpirationTime(type);
   const iat = dayjs();
   const exp = iat.add(time, format as ManipulateType);
   const sub = account.aId;
   const payload: tokenType = {
-    exp: exp.toDate(),
-    iat: iat.toDate(),
+    exp: exp.unix(),
+    iat: iat.unix(),
     sub,
     type,
   };

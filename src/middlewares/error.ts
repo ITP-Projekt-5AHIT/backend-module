@@ -48,6 +48,7 @@ export const handleError = async (
   res: Response,
   _next: NextFunction
 ) => {
+  console.error("handling error ");
   if (!err.isOperational) {
     await handleSevereErrors(err.message);
     return;

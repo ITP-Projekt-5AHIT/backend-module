@@ -1,8 +1,19 @@
 import { NextFunction, Request, Response } from "express";
 import services from "../../services";
-import { loginType, signUpType } from "../../types/auth";
-import { findAccount, generateTokens } from "../../services/auth";
+import {
+  loginType,
+  passwordResetRequestType,
+  signUpType,
+} from "../../types/auth";
+import {
+  findAccountByCredentials,
+  findAccountByUserName,
+  generateToken,
+  generateTokens,
+} from "../../services/auth";
 import catchAsync from "../../utils/catchAsync";
+import { sendPwdResetMail } from "../../services/mail/index";
+import { TOKEN_TYPE } from "../../types/token";
 
 export const postSignUp = catchAsync(
   async (
@@ -22,8 +33,24 @@ export const postLogin = catchAsync(
     res: Response,
     _next: NextFunction
   ) => {
-    const account = await findAccount(req.body);
+    const account = await findAccountByCredentials(req.body);
     const tokens = await generateTokens(account);
     return res.status(200).json({ ...tokens });
+  }
+);
+
+export const postRequestPasswordReset = catchAsync(
+  async (
+    req: Request<passwordResetRequestType>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { userName } = req.params;
+    const account = await findAccountByUserName(userName);
+    const resetToken = await generateToken(
+      account,
+      TOKEN_TYPE.PASSWORD_RESET_TOKEN
+    );
+    await sendPwdResetMail(resetToken, account.email);
   }
 );

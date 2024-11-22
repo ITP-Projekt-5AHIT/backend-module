@@ -1,6 +1,12 @@
 import { coerce, object, string } from "zod";
 import validator from "validator";
 
+export const requestPasswordResetSchema = object({
+  params: object({
+    userName: string({ message: "Bitte gib einen Usernamen ein" }),
+  }),
+});
+
 export const loginSchema = object({
   body: object({
     userName: string({ message: "Bitte gib einen Usernamen ein" }),
