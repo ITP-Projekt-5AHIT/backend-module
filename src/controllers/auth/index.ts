@@ -4,17 +4,22 @@ import {
   loginType,
   passwordResetRequestType,
   passwordSetType,
+  renewTokenType,
   signUpType,
 } from "../../types/auth";
 import {
   findAccountByCredentials,
   findAccountByUserName,
+  generateAccessToken,
   generatePwdResetToken,
   generateTokens,
   handlePasswordReset,
+  isValidToken,
 } from "../../services/auth";
 import catchAsync from "../../utils/catchAsync";
 import { sendPwdResetMail } from "../../services/mail/index";
+import { TOKEN_TYPE } from "../../types/token";
+import { OK } from "http-status";
 
 export const postSignUp = catchAsync(
   async (
@@ -55,9 +60,20 @@ export const postRequestPasswordReset = catchAsync(
 );
 
 export const postPasswordReset = catchAsync(
-  async (req: Request<{}, {}, passwordSetType>, res, next) => {
+  async (req: Request<{}, {}, passwordSetType>, res, _next) => {
     const { token, password } = req.body;
     await handlePasswordReset(`${token}`, password);
     return res.status(200).json({ message: "Passwort wurde geändert" });
+  }
+);
+
+export const postRenewToken = catchAsync(
+  async (req: Request<{}, {}, renewTokenType>, res, _next) => {
+    const tokenFound = await isValidToken(
+      req.body.refresh,
+      TOKEN_TYPE.REFRESH_TOKEN
+    );
+    const accessToken = await generateAccessToken(tokenFound);
+    return res.status(OK).json(accessToken);
   }
 );

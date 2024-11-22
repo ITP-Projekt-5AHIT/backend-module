@@ -1,5 +1,6 @@
 import {
   loginSchema,
+  renewTokenSchema,
   requestPasswordResetSchema,
   setPasswordSchema,
   signUpSchema,
@@ -16,3 +17,6 @@ export type passwordResetRequestType = Zod.infer<passwordReset>;
 
 type passwordSet = typeof setPasswordSchema.shape.body;
 export type passwordSetType = Zod.infer<passwordSet>;
+
+type renewToken = typeof renewTokenSchema.shape.body;
+export type renewTokenType = Zod.infer<renewToken>;

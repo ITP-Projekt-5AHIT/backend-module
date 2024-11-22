@@ -2,7 +2,7 @@ import assert from "assert";
 import { loginType, signUpType } from "../../types/auth";
 import db from "../../utils/db";
 import bcrypt from "bcrypt";
-import { Account } from "@prisma/client";
+import { Account, Token } from "@prisma/client";
 import { getExpirationTime, TOKEN_TYPE, tokenType } from "../../types/token";
 import dayjs, { ManipulateType } from "dayjs";
 import config from "../../config/config";
@@ -115,6 +115,36 @@ export const findAccountByUserName = async (userName: string) => {
   return found;
 };
 
+export const isValidToken = async (token: string, expectedType: TOKEN_TYPE) => {
+  const found = await catchPrisma(
+    async () =>
+      await db.token.findFirst({
+        where: {
+          sub: token,
+          type: expectedType.toString(),
+        },
+      })
+  );
+  assert(
+    found != null,
+    new ApiError(
+      NOT_FOUND,
+      "Anmeldung abgelaufen",
+      "Der Token wurde in der DB nicht gefunden"
+    )
+  );
+  const now = dayjs();
+  assert(
+    now.isBefore(dayjs.unix(Number(found.exp))),
+    new ApiError(
+      NOT_FOUND,
+      "Anmeldung abgelaufen",
+      "Der Token ist gefunden worden, jedoch bereits abgelaufen --> neue Anmeldung!"
+    )
+  );
+  return found;
+};
+
 export const generatePwdResetToken = async (account: Account) => {
   const tokenFound = await catchPrisma(
     async () =>
@@ -160,10 +190,53 @@ export const generatePwdResetToken = async (account: Account) => {
   return token;
 };
 
-export const generateToken = async (account: Account, type: TOKEN_TYPE) => {
+export const generateAccessToken = async (refresh: Token) => {
+  const account = await catchPrisma(
+    async () =>
+      await db.account.findFirst({
+        where: {
+          aId: refresh.aId!,
+        },
+      })
+  );
+  assert(
+    account != null,
+    new ApiError(
+      NOT_FOUND,
+      "Anmeldung abgelaufen",
+      "Kein Account mit der aId gefunden"
+    )
+  );
+  const { payload, token: access } = await generateToken(
+    account,
+    TOKEN_TYPE.ACCESS_TOKEN
+  );
+  const savedToken = await catchPrisma(async () => {
+    const [deleted, saved] = await db.$transaction([
+      db.token.deleteMany({
+        where: {
+          aId: refresh.aId,
+          type: TOKEN_TYPE.ACCESS_TOKEN.toString(),
+        },
+      }),
+      db.token.create({
+        data: {
+          exp: payload.exp,
+          iat: payload.iat,
+          sub: access,
+          type: TOKEN_TYPE.ACCESS_TOKEN.toString(),
+        },
+      }),
+    ]);
+    return saved;
+  });
+  return { access: savedToken.sub };
+};
+
+const generateToken = async (account: Account, type: TOKEN_TYPE) => {
   const { format, time } = getExpirationTime(type);
   const iat = dayjs();
-  const exp = iat.add(time, format as ManipulateType);
+  const exp = iat.add(time, "minutes");
   const sub = account.aId;
   const payload: tokenType = {
     exp: exp.unix(),
@@ -187,13 +260,49 @@ export const generateToken = async (account: Account, type: TOKEN_TYPE) => {
 };
 
 export const generateTokens = async (account: Account) => {
-  const { token: access } = await generateToken(
+  const { token: access, payload: accessPayload } = await generateToken(
     account,
     TOKEN_TYPE.ACCESS_TOKEN
   );
-  const { token: refresh } = await generateToken(
+  const { token: refresh, payload: refreshPayload } = await generateToken(
     account,
     TOKEN_TYPE.REFRESH_TOKEN
   );
+  await catchPrisma(async () => {
+    await Promise.allSettled(
+      await db.$transaction([
+        db.token.deleteMany({
+          where: {
+            aId: account.aId,
+            type: TOKEN_TYPE.ACCESS_TOKEN.toString(),
+          },
+        }),
+        db.token.deleteMany({
+          where: {
+            aId: account.aId,
+            type: TOKEN_TYPE.REFRESH_TOKEN.toString(),
+          },
+        }),
+        db.token.create({
+          data: {
+            exp: accessPayload.exp,
+            iat: accessPayload.iat,
+            sub: access,
+            type: TOKEN_TYPE.ACCESS_TOKEN.toString(),
+            aId: account.aId,
+          },
+        }),
+        db.token.create({
+          data: {
+            exp: refreshPayload.exp,
+            iat: refreshPayload.iat,
+            sub: refresh,
+            type: TOKEN_TYPE.REFRESH_TOKEN.toString(),
+            aId: account.aId,
+          },
+        }),
+      ])
+    );
+  });
   return { access, refresh };
 };

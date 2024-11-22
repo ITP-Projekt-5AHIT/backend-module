@@ -3,6 +3,7 @@ import controllers from "../../controllers";
 import { validate } from "../../middlewares/validation";
 import {
   loginSchema,
+  renewTokenSchema,
   requestPasswordResetSchema,
   setPasswordSchema,
   signUpSchema,
@@ -22,4 +23,9 @@ router.post(
   "/reset",
   [validate(setPasswordSchema)],
   controllers.auth.postPasswordReset
+);
+router.post(
+  "/renew",
+  [validate(renewTokenSchema)],
+  controllers.auth.postRenewToken
 );

@@ -21,6 +21,14 @@ export const setPasswordSchema = object({
   }),
 });
 
+export const renewTokenSchema = object({
+  body: object({
+    refresh: string({ message: "Kein refresh Token gefunden" }).min(1, {
+      message: "Der Token darf nicht leer sein",
+    }),
+  }),
+});
+
 export const loginSchema = object({
   body: object({
     userName: string({ message: "Bitte gib einen Usernamen ein" }),
