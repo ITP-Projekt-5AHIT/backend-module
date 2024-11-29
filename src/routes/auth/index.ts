@@ -8,6 +8,7 @@ import {
   setPasswordSchema,
   signUpSchema,
 } from "../../schema/auth";
+import { auth } from "../../middlewares/auth";
 
 const router = express.Router();
 export default router;
@@ -29,3 +30,4 @@ router.post(
   [validate(renewTokenSchema)],
   controllers.auth.postRenewToken
 );
+router.post('/logout', [auth], controllers.auth.postLogout);

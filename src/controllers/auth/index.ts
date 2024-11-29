@@ -20,6 +20,7 @@ import catchAsync from "../../utils/catchAsync";
 import { sendPwdResetMail } from "../../services/mail/index";
 import { TOKEN_TYPE } from "../../types/token";
 import { OK } from "http-status";
+import { Account, User } from "@prisma/client";
 
 export const postSignUp = catchAsync(
   async (
@@ -32,6 +33,13 @@ export const postSignUp = catchAsync(
     return res.status(201).json({ ...tokens });
   }
 );
+
+export const postLogout = catchAsync(async (req, res, _next) => {
+  const user = req.user as Account;
+  console.log(user);
+  await services.auth.deleteAllTokens(user.aId);
+  return res.status(200).json({});
+});
 
 export const postLogin = catchAsync(
   async (

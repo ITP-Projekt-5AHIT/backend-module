@@ -119,7 +119,7 @@ export const findAccountByUserName = async (userName: string) => {
       userName: userName,
     },
   });
-  assert(found != null, new ApiError(404, "User wurde nicht gefunden"));
+  assert(found != null, new ApiError(404, "Account wurde nicht gefunden"));
   return found;
 };
 
@@ -196,6 +196,35 @@ export const generatePwdResetToken = async (account: Account) => {
       })
   );
   return token;
+};
+
+export const findAccountByAccessToken = async (access: string) => {
+  assert(
+    access != null,
+    new ApiError(
+      NOT_FOUND,
+      "Anmeldung abgelaufen",
+      "Token wurde nicht an die Methode übergeben"
+    )
+  );
+  const token = await db.token.findFirst({
+    where: {
+      sub: access,
+    },
+  });
+  console.log("token");
+  console.log(token);
+  assert(
+    token != null,
+    new ApiError(NOT_FOUND, "Token ungültig", "Kein Token in der DB gefunden")
+  );
+  return await catchPrisma(async () =>
+    db.account.findFirst({
+      where: {
+        aId: token.aId!,
+      },
+    })
+  );
 };
 
 export const generateAccessToken = async (refresh: Token) => {
@@ -313,4 +342,14 @@ export const generateTokens = async (account: Account) => {
     );
   });
   return { access, refresh };
+};
+
+export const deleteAllTokens = async (aId: number) => {
+  return await catchPrisma(async () =>
+    db.token.deleteMany({
+      where: {
+        aId,
+      },
+    })
+  );
 };
