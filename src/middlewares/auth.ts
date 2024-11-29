@@ -24,8 +24,8 @@ const verifyAccessToken = async (payload: tokenType, done: DoneCallback) => {
         httpStatus.UNAUTHORIZED,
         "Token must be an access token!"
       );
-    const account = await authService.findAccountByUserName(
-      payload.sub as string
+    const account = await authService.findAccountByPk(
+      payload.sub as number
     );
     done(null, account);
   } catch (e) {
