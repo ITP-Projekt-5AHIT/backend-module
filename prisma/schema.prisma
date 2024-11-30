@@ -19,6 +19,7 @@ model Account {
   email    String  @unique
   password String
   tokens   Token[]
+  Tour     Tour[]
 }
 
 model User {
@@ -36,4 +37,14 @@ model Token {
   type    String
   aId     Int?
   Account Account? @relation(fields: [aId], references: [aId])
+}
+
+model Tour {
+  tId         Int      @id @unique @default(autoincrement())
+  name        String
+  description String
+  startDate   DateTime
+  endDate     DateTime
+  createdBy   Account  @relation(fields: [tourGuide], references: [aId])
+  tourGuide   Int
 }

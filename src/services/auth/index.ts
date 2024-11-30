@@ -9,14 +9,16 @@ import config from "../../config/config";
 import jwt from "jsonwebtoken";
 import ApiError from "../../utils/apiError";
 import { catchPrisma } from "../../middlewares/error";
-import { BAD_REQUEST, NOT_FOUND, TOO_MANY_REQUESTS } from "http-status";
+import { NOT_FOUND, TOO_MANY_REQUESTS } from "http-status";
 
 export const findAccountByPk = async (aId: number) => {
-  return await db.account.findFirst({
+  const foundAccount = await db.account.findFirst({
     where: {
       aId,
     },
   });
+  console.log(foundAccount);
+  return foundAccount;
 };
 
 export const createAccount = async (accountData: signUpType) => {

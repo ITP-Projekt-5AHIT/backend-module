@@ -40,7 +40,7 @@ const verifyAuth =
     reject: (err: Error) => void
   ) =>
   (err: Error, user: unknown, info: unknown) => {
-    if (err || !user || info) {
+    if (err || !user) {
       reject(new ApiError(UNAUTHORIZED, "Bitte erneut anmelden"));
     }
     req.user = user as Account;
