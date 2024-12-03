@@ -51,13 +51,16 @@ export const signUpSchema = object({
       .refine((pwd) => validator.isStrongPassword(pwd), {
         message: "Bitte verwende ein starkes Passwort",
       }),
-    email: string({ message: "Email muss enthalten sein" })
-      .refine(data => validator.isEmail(data), {
-        message: "Das Email-Format ist ungültig"
+    email: string({ message: "Email muss enthalten sein" }).refine(
+      (data) => validator.isEmail(data),
+      {
+        message: "Das Email-Format ist ungültig",
+      }
+    ),
+    dateOfBirth: coerce
+      .date({
+        message: "Bitte gib das Datum im gültigen Format ein",
       }),
-    dateOfBirth: coerce.date({
-      message: "Bitte gib das Datum im gültigen Format ein",
-    }),
     firstName: string({ message: "Vorname muss enthalten sein" })
       .trim()
       .min(2, { message: "Vorname zu kurz" })
