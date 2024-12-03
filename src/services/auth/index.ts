@@ -23,9 +23,8 @@ export const findAccountByPk = async (aId: number) => {
 export const createAccount = async (accountData: signUpType) => {
   const hashed = await bcrypt.hash(accountData.password, config.SALT);
   const accountType: Omit<Account, "aId"> = {
-    email: accountData.email,
-    password: hashed,
-    userName: accountData.userName,
+    ...accountData,
+    timestamp: dayjs().toDate(),
   };
 
   const created = catchPrisma(
