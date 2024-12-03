@@ -52,9 +52,9 @@ export const signUpSchema = object({
         message: "Bitte verwende ein starkes Passwort",
       }),
     email: string({ message: "Email muss enthalten sein" })
-      .trim()
-      .email({ message: "Ungültige Email-Adresse" })
-      .max(128, { message: "Maximal 128 Zeichen erlaubt" }),
+      .refine(data => validator.isEmail(data), {
+        message: "Das Email-Format ist ungültig"
+      }),
     dateOfBirth: coerce.date({
       message: "Bitte gib das Datum im gültigen Format ein",
     }),
