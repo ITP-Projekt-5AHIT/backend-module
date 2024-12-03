@@ -2,7 +2,6 @@ import dayjs from "dayjs";
 import { tourType } from "../../types/tour";
 import db from "../../utils/db";
 import { catchPrisma } from "../../middlewares/error";
-import catchAsync from "../../utils/catchAsync";
 import assert from "assert";
 import ApiError from "../../utils/apiError";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
@@ -26,7 +25,13 @@ export const createTour = async (tour: tourType, aId: number) => {
 
 export const subscribeTour = async (accessCode: string, aId: number) => {
   const foundTour = await catchPrisma(
-    async () => await db.tour.findFirst({ where: { accessCode } })
+    async () =>
+      await db.tour.findFirst({
+        where: { accessCode },
+        include: {
+          participants: true,
+        },
+      })
   );
   assert(
     foundTour,
@@ -37,6 +42,10 @@ export const subscribeTour = async (accessCode: string, aId: number) => {
     )
   );
   assert(
+    !foundTour.participants.some((p) => p.aId == aId),
+    new ApiError(BAD_REQUEST, "Du bisd bereits bei der Tour")
+  );
+  assert(
     foundTour.tourGuide != aId,
     new ApiError(BAD_REQUEST, "Du kannst deiner eigenen Tour nicht beitreten")
   );
@@ -45,7 +54,11 @@ export const subscribeTour = async (accessCode: string, aId: number) => {
       await db.account.update({
         where: { aId },
         data: {
-          joined: { connect: foundTour },
+          joined: {
+            connect: {
+              tId: foundTour.tId,
+            },
+          },
         },
       })
   );

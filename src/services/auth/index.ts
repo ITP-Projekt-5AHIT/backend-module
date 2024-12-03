@@ -17,7 +17,6 @@ export const findAccountByPk = async (aId: number) => {
       aId,
     },
   });
-  console.log(foundAccount);
   return foundAccount;
 };
 
@@ -214,8 +213,6 @@ export const findAccountByAccessToken = async (access: string) => {
       sub: access,
     },
   });
-  console.log("token");
-  console.log(token);
   assert(
     token != null,
     new ApiError(NOT_FOUND, "Token ungültig", "Kein Token in der DB gefunden")
