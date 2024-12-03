@@ -1,5 +1,13 @@
 import { coerce, object, string } from "zod";
 
+export const subscribeSchema = object({
+  body: object({
+    accessCode: coerce.number({ message: "Der Beitrittscode muss mitgesendet werden" })
+      .min(100_000_000, { message: "Der Beitrittscode muss 9 stellig sein" })
+      .max(999_999_999, { message: "Der Beitrittscode muss 9 stellig sein" }),
+  }),
+});
+
 export const tourSchema = object({
   body: object({
     name: string({ message: "Die Tour muss einen Namen besitzen" })

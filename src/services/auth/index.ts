@@ -4,7 +4,7 @@ import db from "../../utils/db";
 import bcrypt from "bcrypt";
 import { Account, Token } from "@prisma/client";
 import { getExpirationTime, TOKEN_TYPE, tokenType } from "../../types/token";
-import dayjs, { ManipulateType } from "dayjs";
+import dayjs from "dayjs";
 import config from "../../config/config";
 import jwt from "jsonwebtoken";
 import ApiError from "../../utils/apiError";
@@ -80,7 +80,7 @@ export const handlePasswordReset = async (token: string, password: string) => {
 };
 
 export const findAccountByCredentials = async (credentials: loginType) => {
-  const found = await db.account.findUnique({
+  const found = await db.account.findFirst({
     where: {
       userName: credentials.userName,
     },

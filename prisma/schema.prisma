@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,19 +8,17 @@ datasource db {
 }
 
 model Account {
-  aId      Int     @id @unique @default(autoincrement())
-  userName String  @unique
-  email    String  @unique
-  password String
-  tokens   Token[]
-  Tour     Tour[]
-}
-
-model User {
-  uId         Int      @id @unique @default(autoincrement())
-  firstName   String
-  lastName    String
-  dateOfBirth DateTime
+  aId         Int      @id @unique @default(autoincrement())
+  userName    String   @unique
+  email       String   @unique
+  password    String
+  firstName   String   @default("Max")
+  lastName    String   @default("Mustermann")
+  dateOfBirth DateTime @default(now())
+  timestamp   DateTime @default(now())
+  tokens      Token[]
+  created     Tour[]   @relation("created")
+  joined      Tour[]   @relation("joined")
 }
 
 model Token {
@@ -40,11 +32,13 @@ model Token {
 }
 
 model Tour {
-  tId         Int      @id @unique @default(autoincrement())
-  name        String
-  description String
-  startDate   DateTime
-  endDate     DateTime
-  createdBy   Account  @relation(fields: [tourGuide], references: [aId])
-  tourGuide   Int
+  tId          Int       @id @unique @default(autoincrement())
+  name         String
+  description  String
+  startDate    DateTime
+  endDate      DateTime
+  tourGuide    Int
+  accessCode   String    @unique
+  createdBy    Account   @relation("created", fields: [tourGuide], references: [aId])
+  participants Account[] @relation("joined")
 }
