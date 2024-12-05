@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { tourType } from "../../types/tour";
+import { tourDetails, tourType } from "../../types/tour";
 import db from "../../utils/db";
 import { catchPrisma } from "../../middlewares/error";
 import assert from "assert";
@@ -16,14 +16,65 @@ export const loadTourById = async (tId: number) => {
       "Bitte gib bei der URL /tId hinten mit!"
     )
   );
-  const tour = await catchPrisma(
-    async () => await db.tour.findFirst({ where: { tId } })
-  );
-  assert(!tour, new ApiError(NOT_FOUND, "Tour konnte nicht gefunden"));
+  const tour = await db.tour.findFirst({ where: { tId: Number(tId) } });
+  assert(tour != null, new ApiError(NOT_FOUND, "Tour konnte nicht gefunden"));
   return tour;
 };
 
-export const pickTourData = async (tour: Tour, isTourGuide: boolean) => {};
+export const getToursOfTourGuide = async (aId: number) => {
+  return await db.tour.findMany({
+    where: {
+      createdBy: {
+        aId,
+      },
+    },
+    select: {
+      tId: true,
+      accessCode: true,
+      name: true,
+      startDate: true,
+    },
+  });
+};
+
+export const pickTourData = async (tour: Tour, isTourGuide: boolean) => {
+  const nullableValues = {
+    accessCode: null,
+    participants: null,
+  };
+  const participants = await db.account.findMany({
+    where: {
+      joined: {
+        some: {
+          tId: tour.tId,
+        },
+      },
+    },
+    select: {
+      firstName: true,
+      lastName: true,
+    },
+  });
+  const tourGuide = await db.account.findFirst({
+    where: {
+      created: {
+        every: {
+          tId: tour.tId,
+        },
+      },
+    },
+  });
+
+  const participantCount = participants?.length ?? 0;
+  let loadedTour: tourDetails = {
+    ...tour,
+    participantCount,
+    tourGuide: `${tourGuide?.lastName} ${tourGuide?.firstName}`,
+    participants: participants as tourDetails["participants"],
+  };
+  if (!isTourGuide) loadedTour = { ...loadedTour, ...nullableValues };
+  return loadedTour;
+};
 
 export const createTour = async (tour: tourType, aId: number) => {
   const tourCode = Math.floor(100000000 + Math.random() * 900000000);
