@@ -5,6 +5,11 @@ import services from "../../services";
 import { Account } from "@prisma/client";
 import { CREATED, OK } from "http-status";
 
+export const getTourDetails = catchAsync(async (req, res, next) => {
+  const { tourId } = req.params;
+  const tour = await services.tour.loadTourById(tourId);
+});
+
 export const postCreateTour = catchAsync(
   async (req: Request<object, object, tourType>, res, next) => {
     const account = req.user as Account;

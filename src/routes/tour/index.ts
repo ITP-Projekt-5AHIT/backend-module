@@ -12,3 +12,4 @@ router.post(
   [validate(subscribeSchema)],
   controllers.tour.postSubscribeTour
 );
+router.get("/:tourId", controllers.tour.getTourDetails);
