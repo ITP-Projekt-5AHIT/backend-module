@@ -5,6 +5,25 @@ import { catchPrisma } from "../../middlewares/error";
 import assert from "assert";
 import ApiError from "../../utils/apiError";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
+import { Tour } from "@prisma/client";
+
+export const loadTourById = async (tId: number) => {
+  assert(
+    tId,
+    new ApiError(
+      BAD_REQUEST,
+      "Tour-id muss als Parameter mitgegeben werden",
+      "Bitte gib bei der URL /tId hinten mit!"
+    )
+  );
+  const tour = await catchPrisma(
+    async () => await db.tour.findFirst({ where: { tId } })
+  );
+  assert(!tour, new ApiError(NOT_FOUND, "Tour konnte nicht gefunden"));
+  return tour;
+};
+
+export const pickTourData = async (tour: Tour, isTourGuide: boolean) => {};
 
 export const createTour = async (tour: tourType, aId: number) => {
   const tourCode = Math.floor(100000000 + Math.random() * 900000000);

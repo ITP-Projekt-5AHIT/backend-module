@@ -32,13 +32,47 @@ model Token {
 }
 
 model Tour {
-  tId          Int       @id @unique @default(autoincrement())
+  tId          Int          @id @unique @default(autoincrement())
   name         String
   description  String
   startDate    DateTime
   endDate      DateTime
   tourGuide    Int
-  accessCode   String    @unique
-  createdBy    Account   @relation("created", fields: [tourGuide], references: [aId])
-  participants Account[] @relation("joined")
+  accessCode   String       @unique
+  createdBy    Account      @relation("created", fields: [tourGuide], references: [aId])
+  participants Account[]    @relation("joined")
+  attractions  Attraction[] @relation("tourAttractions")
+}
+
+model Attraction {
+  atId         Int      @id @unique @default(autoincrement())
+  minAge       Int      @default(0)
+  description  String
+  openingHours Json?
+  website      String
+  location     Location @relation(fields: [lId], references: [lId])
+  lId          Int
+  tours        Tour[]   @relation("tourAttractions")
+}
+
+model Location {
+  lId              Int          @id @unique @default(autoincrement())
+  postCode         Int
+  country          String
+  street           String
+  houseNumber      String?
+  latitude         Int
+  longtitude       Int
+  routeDescription String?
+  Checkpoint       Checkpoint[]
+  Attraction       Attraction[]
+}
+
+model Checkpoint {
+  cId            Int      @id @default(autoincrement())
+  name           String
+  time           DateTime
+  isMeetingPoint Boolean
+  location       Location @relation(fields: [lId], references: [lId])
+  lId            Int
 }
