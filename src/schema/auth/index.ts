@@ -1,6 +1,41 @@
 import { coerce, object, string } from "zod";
 import validator from "validator";
 
+export const requestPasswordResetSchema = object({
+  params: object({
+    userName: string({ message: "Bitte gib einen Usernamen ein" }),
+  }),
+});
+
+export const setPasswordSchema = object({
+  body: object({
+    token: coerce
+      .number({ message: "Bitte gib die 6-stellige Nummer ein" })
+      .min(100_000, { message: "Zahl zu klein" })
+      .max(999_999, { message: "Zahl zu groß" }),
+    password: string({ message: "Bitte gib ein neues, starked Password ein" })
+      .max(256)
+      .refine((pwd) => validator.isStrongPassword(pwd), {
+        message: "Bitte verwende ein starkes Passwort",
+      }),
+  }),
+});
+
+export const renewTokenSchema = object({
+  body: object({
+    refresh: string({ message: "Kein refresh Token gefunden" }).min(1, {
+      message: "Der Token darf nicht leer sein",
+    }),
+  }),
+});
+
+export const loginSchema = object({
+  body: object({
+    userName: string({ message: "Bitte gib einen Usernamen ein" }),
+    password: string({ message: "Bitte gib ein Passwort ein" }),
+  }),
+});
+
 export const signUpSchema = object({
   body: object({
     userName: string({ message: "Username muss enthalten sein" })
@@ -16,13 +51,16 @@ export const signUpSchema = object({
       .refine((pwd) => validator.isStrongPassword(pwd), {
         message: "Bitte verwende ein starkes Passwort",
       }),
-    email: string({ message: "Email muss enthalten sein" })
-      .trim()
-      .email({ message: "Ungültige Email-Adresse" })
-      .max(128, { message: "Maximal 128 Zeichen erlaubt" }),
-    dateOfBirth: coerce.date({
-      message: "Bitte gib das Datum im gültigen Format ein",
-    }),
+    email: string({ message: "Email muss enthalten sein" }).refine(
+      (data) => validator.isEmail(data),
+      {
+        message: "Das Email-Format ist ungültig",
+      }
+    ),
+    dateOfBirth: coerce
+      .date({
+        message: "Bitte gib das Datum im gültigen Format ein",
+      }),
     firstName: string({ message: "Vorname muss enthalten sein" })
       .trim()
       .min(2, { message: "Vorname zu kurz" })

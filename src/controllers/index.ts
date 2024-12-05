@@ -1,5 +1,7 @@
-import * as authControllers from "./auth";
+import * as authController from "./auth";
+import * as tourController from "./tour";
 
 export default {
-  auth: authControllers,
+  auth: authController,
+  tour: tourController,
 };

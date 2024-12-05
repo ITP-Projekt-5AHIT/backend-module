@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  aId         Int      @id @unique @default(autoincrement())
+  userName    String   @unique
+  email       String   @unique
+  password    String
+  firstName   String   @default("Max")
+  lastName    String   @default("Mustermann")
+  dateOfBirth DateTime @default(now())
+  timestamp   DateTime @default(now())
+  tokens      Token[]
+  created     Tour[]   @relation("created")
+  joined      Tour[]   @relation("joined")
+}
+
+model Token {
+  tId     Int      @id @unique @default(autoincrement())
+  exp     BigInt
+  iat     BigInt
+  sub     String
+  type    String
+  aId     Int?
+  Account Account? @relation(fields: [aId], references: [aId])
+}
+
+model Tour {
+  tId          Int       @id @unique @default(autoincrement())
+  name         String
+  description  String
+  startDate    DateTime
+  endDate      DateTime
+  tourGuide    Int
+  accessCode   String    @unique
+  createdBy    Account   @relation("created", fields: [tourGuide], references: [aId])
+  participants Account[] @relation("joined")
+}
