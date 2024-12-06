@@ -33,6 +33,7 @@ export const getToursOfTourGuide = async (aId: number) => {
       accessCode: true,
       name: true,
       startDate: true,
+      endDate: true,
     },
   });
 };
@@ -77,7 +78,7 @@ export const pickTourData = async (tour: Tour, isTourGuide: boolean) => {
 };
 
 export const createTour = async (tour: tourType, aId: number) => {
-  const tourCode = Math.floor(100000000 + Math.random() * 900000000);
+  const generateNm = () => Math.floor(100000000 + Math.random() * 900000000);
   return await catchPrisma(
     async () =>
       await db.tour.create({
@@ -86,10 +87,16 @@ export const createTour = async (tour: tourType, aId: number) => {
           startDate: dayjs(tour.startDate).toDate(),
           endDate: dayjs(tour.endDate).toDate(),
           description: tour.description,
-          accessCode: String(tourCode),
+          accessCode: String(generateNm()),
           name: tour.name,
         },
-      })
+      }),
+    new ApiError(
+      INTERNAL_SERVER_ERROR,
+      "Bitte probiere es erneut",
+      "Beim generien des Codes ist ein Fehler aufgetreten, da der Code bereits" +
+        " bei einer anderen Tour verwendet wird"
+    )
   );
 };
 
