@@ -27,7 +27,6 @@ const verifyAccessToken = async (payload: tokenType, done: DoneCallback) => {
     const account = await authService.findAccountByPk(
       payload.sub as number
     );
-    console.log(account);
     done(null, account);
   } catch (e) {
     done(e, null);
