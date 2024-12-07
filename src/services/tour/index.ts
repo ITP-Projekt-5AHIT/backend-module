@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { tourDetails, tourType } from "../../types/tour";
-import db from "../../utils/db";
+import db, { generateAccessCode } from "../../utils/db";
 import { catchPrisma } from "../../middlewares/error";
 import assert from "assert";
 import ApiError from "../../utils/apiError";
@@ -77,7 +77,7 @@ export const pickTourData = async (tour: Tour, isTourGuide: boolean) => {
 };
 
 export const createTour = async (tour: tourType, aId: number) => {
-  const tourCode = Math.floor(100000000 + Math.random() * 900000000);
+  const tourCode = await generateAccessCode();
   return await catchPrisma(
     async () =>
       await db.tour.create({
