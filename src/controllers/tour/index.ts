@@ -7,22 +7,29 @@ import {
 } from "../../types/tour";
 import services from "../../services";
 import { Account } from "@prisma/client";
-import { CONFLICT, CREATED, NOT_FOUND, OK } from "http-status";
+import { CONFLICT, CREATED, NOT_FOUND, OK, UNAUTHORIZED } from "http-status";
 import ApiError from "../../utils/apiError";
 import assert from "assert";
 
 export const getTourDetails = catchAsync(async (req, res, next) => {
   const { tourId } = req.params;
+  const user = req.user as Account;
   const tour = await services.tour.loadTourById(tourId);
   assert(
     tour != null,
     new ApiError(NOT_FOUND, "Tour wurde leider nicht gefunden")
   );
   const tours = res.locals.tours as loadedTourGuideTours[];
-  console.log(tours);
   const isTourGuide = tours && tours?.some((t) => t?.tId == tour.tId);
+  assert(
+    isTourGuide || tour.participants.some((p) => p.aId == user.aId),
+    new ApiError(
+      UNAUTHORIZED,
+      "Du musst entweder Ersteller oder Teilnehmer sein, um die Daten sehen zu dürfen"
+    )
+  );
   const loadedData = await services.tour.pickTourData(tour, isTourGuide);
-  return res.status(OK).json({ tour: { ...loadedData } });
+  return res.status(OK).json({ ...loadedData });
 });
 
 export const postCreateTour = catchAsync(

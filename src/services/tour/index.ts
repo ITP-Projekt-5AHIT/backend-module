@@ -28,7 +28,10 @@ export const loadTourById = async (tId: number) => {
       "Bitte gib bei der URL /tId hinten mit!"
     )
   );
-  const tour = await db.tour.findFirst({ where: { tId: Number(tId) } });
+  const tour = await db.tour.findFirst({
+    where: { tId: Number(tId) },
+    include: { participants: true },
+  });
   assert(tour != null, new ApiError(NOT_FOUND, "Tour konnte nicht gefunden"));
   return tour;
 };
