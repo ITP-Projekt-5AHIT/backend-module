@@ -7,7 +7,7 @@ import {
 } from "../../types/tour";
 import services from "../../services";
 import { Account } from "@prisma/client";
-import { CREATED, NOT_FOUND, OK } from "http-status";
+import { CONFLICT, CREATED, NOT_FOUND, OK } from "http-status";
 import ApiError from "../../utils/apiError";
 import assert from "assert";
 
@@ -28,6 +28,13 @@ export const getTourDetails = catchAsync(async (req, res, next) => {
 export const postCreateTour = catchAsync(
   async (req: Request<object, object, tourType>, res, next) => {
     const account = req.user as Account;
+    if (await services.tour.hasStartingTours(account.aId))
+      return next(
+        new ApiError(
+          CONFLICT,
+          "Du darfst nicht mehrere Tours gleichzeitig anlegen"
+        )
+      );
     const tour = await services.tour.createTour(req.body, account.aId);
     return res.status(CREATED).json(tour);
   }
