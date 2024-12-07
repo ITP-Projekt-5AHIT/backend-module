@@ -33,6 +33,7 @@ export const getToursOfTourGuide = async (aId: number) => {
       accessCode: true,
       name: true,
       startDate: true,
+      endDate: true,
     },
   });
 };
@@ -89,7 +90,13 @@ export const createTour = async (tour: tourType, aId: number) => {
           accessCode: String(tourCode),
           name: tour.name,
         },
-      })
+      }),
+    new ApiError(
+      INTERNAL_SERVER_ERROR,
+      "Bitte probiere es erneut",
+      "Beim generien des Codes ist ein Fehler aufgetreten, da der Code bereits" +
+        " bei einer anderen Tour verwendet wird"
+    )
   );
 };
 

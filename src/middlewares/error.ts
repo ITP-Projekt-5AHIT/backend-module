@@ -7,10 +7,14 @@ import errorResponseType from "../types/error";
 import config from "../config/config";
 import { Prisma } from "@prisma/client";
 
-export const catchPrisma = async <T>(cb: () => T): Promise<T> => {
+export const catchPrisma = async <T>(
+  cb: () => T,
+  apiError?: ApiError
+): Promise<T> => {
   try {
     return await cb();
   } catch (err) {
+    if (apiError) throw apiError;
     if (
       err instanceof Prisma.PrismaClientKnownRequestError &&
       err.code === "P2002"
