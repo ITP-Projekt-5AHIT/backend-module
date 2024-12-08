@@ -42,6 +42,7 @@ model Tour {
   createdBy    Account      @relation("created", fields: [tourGuide], references: [aId])
   participants Account[]    @relation("joined")
   attractions  Attraction[] @relation("tourAttractions")
+  checkpoints  Checkpoint[] @relation("tourCheckPoints")
 }
 
 model Attraction {
@@ -75,4 +76,6 @@ model Checkpoint {
   isMeetingPoint Boolean
   location       Location @relation(fields: [lId], references: [lId])
   lId            Int
+  tour           Tour     @relation("tourCheckPoints", fields: [tourId], references: [tId])
+  tourId         Int
 }

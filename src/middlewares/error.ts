@@ -14,6 +14,7 @@ export const catchPrisma = async <T>(
   try {
     return await cb();
   } catch (err) {
+    console.error(err);
     if (apiError) throw apiError;
     if (
       err instanceof Prisma.PrismaClientKnownRequestError &&
@@ -81,6 +82,7 @@ export const handleError = async (
   res: Response,
   _next: NextFunction
 ) => {
+  console.error(err);
   if (!err.isOperational) {
     await handleSevereErrors(err.message);
     return;
