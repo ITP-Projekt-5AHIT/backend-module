@@ -1,4 +1,5 @@
 import { coerce, object, string } from "zod";
+import { locationSchema } from "../location";
 
 export const checkpointSchema = object({
   body: object({
@@ -23,8 +24,16 @@ export const checkpointSchema = object({
       .min(0, { message: "PK koennen nicht negativ sein" }),
     locationId: coerce
       .number({ message: "Die Referenz zur Location fehlt" })
-      .min(0, { message: "PK koennen nicht negativ sein" }),
-  }).refine((data) => data.isMeetingPoint && data.time, {
-    message: "Wenn der CP als Treffpunkt gilt, muss eine Zeit angegeben werden",
-  }),
+      .min(0, { message: "PK koennen nicht negativ sein" })
+      .optional(),
+    location: locationSchema.optional(),
+  })
+    .refine((data) => data.isMeetingPoint && data.time, {
+      message:
+        "Wenn der CP als Treffpunkt gilt, muss eine Zeit angegeben werden",
+    })
+    .refine((data) => !!data.location || !!data.locationId, {
+      message:
+        "Es muss entweder eine Location oder eine bestehende ID angegeben sein",
+    }),
 });

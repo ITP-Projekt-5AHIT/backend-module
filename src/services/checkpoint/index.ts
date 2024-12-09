@@ -4,7 +4,7 @@ import { checkPointType } from "../../types/checkpoint";
 import db from "../../utils/db";
 import dayjs from "dayjs";
 import ApiError from "../../utils/apiError";
-import { BAD_REQUEST, NOT_FOUND } from "http-status";
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
 
 export const createCheckPoint = async (checkpoint: checkPointType) => {
   const tour = await db.tour.findFirst({
@@ -20,14 +20,41 @@ export const createCheckPoint = async (checkpoint: checkPointType) => {
 
   if (
     checkpoint.isMeetingPoint &&
-    dayjs(tour.startDate).isBefore(checkpoint.time) &&
-    dayjs(tour.endDate).isAfter(checkpoint.time)
+    (!dayjs(tour.startDate).isBefore(checkpoint.time) ||
+      !dayjs(tour.endDate).isAfter(checkpoint.time))
   ) {
     throw new ApiError(
       BAD_REQUEST,
       "Der Treffpunkt muss zeitlich innerhalb der Tour liegen"
     );
   }
+
+  const getLocationId = async () => {
+    if (checkpoint.location) {
+      const { country, houseNumber, latitude, longtitude, postCode, street } =
+        checkpoint.location;
+      return (
+        await db.location.create({
+          data: {
+            country,
+            houseNumber,
+            latitude,
+            longtitude,
+            postCode,
+            street,
+          },
+        })
+      ).lId;
+    }
+    return checkpoint.locationId;
+  };
+
+  const lId = await getLocationId();
+
+  assert(
+    lId,
+    new ApiError(INTERNAL_SERVER_ERROR, "LId turned out as undefined!")
+  );
 
   return await catchPrisma(
     async () =>
@@ -37,7 +64,7 @@ export const createCheckPoint = async (checkpoint: checkPointType) => {
           name: checkpoint.name,
           time: dayjs(checkpoint.time!).toDate(),
           tourId: checkpoint.tourId,
-          lId: checkpoint.locationId,
+          lId: lId!,
         },
         include: {
           location: true,

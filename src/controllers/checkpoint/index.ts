@@ -1,4 +1,4 @@
-import { BAD_REQUEST, CREATED, UNAUTHORIZED } from "http-status";
+import { CREATED, UNAUTHORIZED } from "http-status";
 import ApiError from "../../utils/apiError";
 import catchAsync from "../../utils/catchAsync";
 import assert from "assert";
