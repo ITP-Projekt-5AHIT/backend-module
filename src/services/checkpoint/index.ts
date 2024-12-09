@@ -6,6 +6,35 @@ import dayjs from "dayjs";
 import ApiError from "../../utils/apiError";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
 
+export const isOnTour = async (tourId: number, aId: number) => {
+  const tour = await db.tour.findFirst({
+    where: {
+      tId: Number(tourId),
+    },
+    include: {
+      participants: true,
+      createdBy: true,
+    },
+  });
+  return (
+    tour &&
+    (tour?.createdBy.aId == aId || tour.participants.find((p) => p.aId == aId))
+  );
+};
+
+export const loadCheckPoints = async (tourId: number, limit: number) => {
+  const checkpoints = await db.checkpoint.findMany({
+    where: {
+      tourId: Number(tourId),
+    },
+    take: limit,
+    include: {
+      location: true,
+    },
+  });
+  return checkpoints;
+};
+
 export const createCheckPoint = async (checkpoint: checkPointType) => {
   const tour = await db.tour.findFirst({
     where: {

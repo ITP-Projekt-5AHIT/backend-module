@@ -10,3 +10,4 @@ router.post(
   [validate(checkpointSchema)],
   controllers.cp.postCreateCheckPoint
 );
+router.get("/:tourId", controllers.cp.getCheckPoints);
