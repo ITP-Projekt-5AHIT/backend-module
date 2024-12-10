@@ -11,3 +11,4 @@ router.post(
   controllers.cp.postCreateCheckPoint
 );
 router.get("/:tourId", controllers.cp.getCheckPoints);
+router.get("/next/:tourId", controllers.cp.getNextCheckPoint);

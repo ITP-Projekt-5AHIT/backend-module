@@ -5,6 +5,7 @@ import db from "../../utils/db";
 import dayjs from "dayjs";
 import ApiError from "../../utils/apiError";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
+import { time } from "console";
 
 export const isOnTour = async (tourId: number, aId: number) => {
   const tour = await db.tour.findFirst({
@@ -23,13 +24,30 @@ export const isOnTour = async (tourId: number, aId: number) => {
 };
 
 export const loadCheckPoints = async (tourId: number, limit: number) => {
+  const tour = await db.tour.findFirst({
+    where: {
+      tId: Number(tourId),
+    },
+  });
+  if (dayjs(tour?.endDate).isBefore(dayjs())) {
+    throw new ApiError(
+      BAD_REQUEST,
+      "Es können keine Checkpoints von abgelaufenen Touren angezeit werden"
+    );
+  }
   const checkpoints = await db.checkpoint.findMany({
     where: {
       tourId: Number(tourId),
+      time: {
+        lt: dayjs().toDate(),
+      },
     },
     take: limit,
     include: {
       location: true,
+    },
+    orderBy: {
+      time: "asc",
     },
   });
   return checkpoints;
