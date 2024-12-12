@@ -6,17 +6,45 @@ import assert from "assert";
 import ApiError from "../../utils/apiError";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
 import { Tour } from "@prisma/client";
+import logger from "../../config/logger";
 
-export const hasStartingTours = async (aId: number): Promise<boolean> => {
-  return (
-    (await db.tour.findMany({
-      where: {
-        endDate: {
-          gt: dayjs().toDate(),
+export const hasStartingTours = async (
+  aId: number,
+  startDate: Date,
+  endDate: Date
+): Promise<{ tours: number[]; startingTours: boolean }> => {
+  const foundTours = await db.tour.findMany({
+    where: {
+      OR: [
+        {
+          createdBy: {
+            aId: Number(aId),
+          },
         },
-      },
-    })) != null
-  );
+        {
+          participants: {
+            some: {
+              aId: Number(aId),
+            },
+          },
+        },
+      ],
+      AND: [
+        {
+          startDate: {
+            lte: dayjs(endDate).toDate(),
+          },
+        },
+        {
+          endDate: {
+            gte: dayjs(startDate).toDate(),
+          },
+        },
+      ],
+    },
+  });
+  const startingTours = foundTours && foundTours.length > 0;
+  return { tours: foundTours.map((t) => t.tId), startingTours };
 };
 
 export const loadTourById = async (tId: number) => {
