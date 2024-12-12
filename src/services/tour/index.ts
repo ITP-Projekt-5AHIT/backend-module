@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { tourDetails, tourType, userTour } from "../../types/tour";
+import { tourDetails, tourType } from "../../types/tour";
 import db, { generateAccessCode } from "../../utils/db";
 import { catchPrisma } from "../../middlewares/error";
 import assert from "assert";
