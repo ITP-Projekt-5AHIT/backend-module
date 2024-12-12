@@ -10,6 +10,7 @@ import jwt from "jsonwebtoken";
 import ApiError from "../../utils/apiError";
 import { catchPrisma } from "../../middlewares/error";
 import { NOT_FOUND, TOO_MANY_REQUESTS } from "http-status";
+import { omit } from "lodash";
 
 export const findAccountByPk = async (aId: number) => {
   const foundAccount = await db.account.findFirst({
@@ -22,7 +23,7 @@ export const findAccountByPk = async (aId: number) => {
 
 export const createAccount = async (accountData: signUpType) => {
   const hashed = await bcrypt.hash(accountData.password, config.SALT);
-  const accountType: Omit<Account, "aId"> = {
+  const data = {
     ...accountData,
     timestamp: dayjs().toDate(),
   };
@@ -31,7 +32,8 @@ export const createAccount = async (accountData: signUpType) => {
     async () =>
       await db.account.create({
         data: {
-          ...accountType,
+          ...omit(data, "body"),
+          password: hashed,
         },
       })
   );
