@@ -128,7 +128,8 @@ export const deleteTour = async (
             aId,
           },
         },
-      })
+      }),
+    new ApiError(NOT_FOUND, "Die Tour wurde nicht gefunden")
   );
   return foundTour != null;
 };
