@@ -1,5 +1,14 @@
 import dayjs from "dayjs";
-import { coerce, object, string } from "zod";
+import { coerce, number, object, string } from "zod";
+
+export const deleteTourSchema = object({
+  body: object({
+    tourId: number({ message: "Eine Tourid muss angegeben werden" }).min(
+      0,
+      "PK muss positiv sein"
+    ),
+  }),
+});
 
 export const subscribeSchema = object({
   body: object({

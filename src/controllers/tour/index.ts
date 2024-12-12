@@ -1,15 +1,33 @@
 import { Request } from "express";
 import catchAsync from "../../utils/catchAsync";
 import {
+  deleteTourType,
   loadedTourGuideTours,
   subscribeType,
   tourType,
 } from "../../types/tour";
 import services from "../../services";
 import { Account } from "@prisma/client";
-import { CONFLICT, CREATED, NOT_FOUND, OK, UNAUTHORIZED } from "http-status";
+import {
+  BAD_REQUEST,
+  CONFLICT,
+  CREATED,
+  NOT_FOUND,
+  OK,
+  UNAUTHORIZED,
+} from "http-status";
 import ApiError from "../../utils/apiError";
 import assert from "assert";
+
+export const deleteTour = catchAsync(
+  async (req: Request<object, object, deleteTourType>, res, next) => {
+    const { tourId } = req.body;
+    const user = req.user as Account;
+    const deleted = await services.tour.deleteTour(tourId, user.aId);
+    const status = deleted ? OK : BAD_REQUEST;
+    return res.status(status).json({});
+  }
+);
 
 export const getTourDetails = catchAsync(async (req, res, next) => {
   const { tourId } = req.params;

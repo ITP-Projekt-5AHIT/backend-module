@@ -115,6 +115,24 @@ export const createTour = async (tour: tourType, aId: number) => {
   );
 };
 
+export const deleteTour = async (
+  tourId: number,
+  aId: number
+): Promise<boolean> => {
+  const foundTour = await catchPrisma(
+    async () =>
+      await db.tour.delete({
+        where: {
+          tId: Number(tourId),
+          createdBy: {
+            aId,
+          },
+        },
+      })
+  );
+  return foundTour != null;
+};
+
 export const subscribeTour = async (accessCode: string, aId: number) => {
   const foundTour = await catchPrisma(
     async () =>
