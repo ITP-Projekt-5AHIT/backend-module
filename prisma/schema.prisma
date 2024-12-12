@@ -8,16 +8,16 @@ datasource db {
 }
 
 model Account {
-  aId         Int      @id @unique @default(autoincrement())
-  userName    String   @unique
-  email       String   @unique
-  password    String
-  firstName   String   @default("Max")
-  lastName    String   @default("Mustermann")
-  timestamp   DateTime @default(now())
-  tokens      Token[]
-  created     Tour[]   @relation("created")
-  joined      Tour[]   @relation("joined")
+  aId       Int      @id @unique @default(autoincrement())
+  userName  String   @unique
+  email     String   @unique
+  password  String
+  firstName String   @default("Max")
+  lastName  String   @default("Mustermann")
+  timestamp DateTime @default(now())
+  tokens    Token[]
+  created   Tour[]   @relation("created")
+  joined    Tour[]   @relation("joined")
 }
 
 model Token {
@@ -38,10 +38,10 @@ model Tour {
   endDate      DateTime
   tourGuide    Int
   accessCode   String       @unique
+  checkpoints  Checkpoint[] @relation("tourCheckPoints")
   createdBy    Account      @relation("created", fields: [tourGuide], references: [aId])
   participants Account[]    @relation("joined")
   attractions  Attraction[] @relation("tourAttractions")
-  checkpoints  Checkpoint[] @relation("tourCheckPoints")
 }
 
 model Attraction {
@@ -50,8 +50,8 @@ model Attraction {
   description  String
   openingHours Json?
   website      String
-  location     Location @relation(fields: [lId], references: [lId])
   lId          Int
+  location     Location @relation(fields: [lId], references: [lId])
   tours        Tour[]   @relation("tourAttractions")
 }
 
@@ -64,8 +64,8 @@ model Location {
   latitude         Int
   longtitude       Int
   routeDescription String?
-  Checkpoint       Checkpoint[]
   Attraction       Attraction[]
+  Checkpoint       Checkpoint[]
 }
 
 model Checkpoint {
@@ -73,8 +73,8 @@ model Checkpoint {
   name           String
   time           DateTime
   isMeetingPoint Boolean
-  location       Location @relation(fields: [lId], references: [lId])
   lId            Int
-  tour           Tour     @relation("tourCheckPoints", fields: [tourId], references: [tId])
   tourId         Int
+  location       Location @relation(fields: [lId], references: [lId])
+  tour           Tour     @relation("tourCheckPoints", fields: [tourId], references: [tId])
 }

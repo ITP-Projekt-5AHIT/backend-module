@@ -19,6 +19,12 @@ import {
 import ApiError from "../../utils/apiError";
 import assert from "assert";
 
+export const getUserTour = catchAsync(async (req, res, next) => {
+  const { aId } = req.user as Account;
+  const activeTour = await services.tour.findActiveTour(aId);
+  return res.status(200).json({ tour: { ...activeTour } });
+});
+
 export const deleteTour = catchAsync(
   async (req: Request<object, object, deleteTourType>, res, next) => {
     const { tourId } = req.body;

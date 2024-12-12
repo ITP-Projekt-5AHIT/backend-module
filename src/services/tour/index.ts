@@ -133,6 +133,43 @@ export const deleteTour = async (
   return foundTour != null;
 };
 
+export const findActiveTour = async (aId: number) => {
+  const tours = await catchPrisma(
+    async () =>
+      await db.tour.findFirst({
+        where: {
+          OR: [
+            {
+              createdBy: {
+                aId: Number(aId),
+              },
+            },
+            {
+              participants: {
+                some: {
+                  aId: Number(aId),
+                },
+              },
+            },
+          ],
+          AND: [
+            {
+              startDate: {
+                lt: dayjs().toDate(),
+              },
+            },
+            {
+              endDate: {
+                gt: dayjs().toDate(),
+              },
+            },
+          ],
+        },
+      })
+  );
+  return tours;
+};
+
 export const subscribeTour = async (accessCode: string, aId: number) => {
   const foundTour = await catchPrisma(
     async () =>

@@ -23,3 +23,4 @@ router.delete(
   [validate(deleteTourSchema)],
   controllers.tour.deleteTour
 );
+router.get("/", controllers.tour.getUserTour);
