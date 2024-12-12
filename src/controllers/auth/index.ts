@@ -28,7 +28,6 @@ export const postSignUp = catchAsync(
     res: Response,
     _next: NextFunction
   ) => {
-    console.log("signup,", req.body);
     const account = await services.auth.createAccount(req.body);
     const tokens = await generateTokens(account);
     return res.status(201).json({ ...tokens });
