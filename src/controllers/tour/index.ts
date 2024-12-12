@@ -1,4 +1,4 @@
-import { Request } from "express";
+import e, { Request } from "express";
 import catchAsync from "../../utils/catchAsync";
 import {
   deleteTourType,
@@ -18,6 +18,7 @@ import {
 } from "http-status";
 import ApiError from "../../utils/apiError";
 import assert from "assert";
+import errorResponseType from "../../types/error";
 
 export const getUserTour = catchAsync(async (req, res, next) => {
   const { aId } = req.user as Account;
@@ -61,12 +62,17 @@ export const getTourDetails = catchAsync(async (req, res, next) => {
 export const postCreateTour = catchAsync(
   async (req: Request<object, object, tourType>, res, next) => {
     const account = req.user as Account;
-    if (await services.tour.hasStartingTours(account.aId))
-      return next(
-        new ApiError(
-          CONFLICT,
-          "Du darfst nicht mehrere Tours gleichzeitig anlegen"
-        )
+    const { endDate, startDate } = req.body;
+    const { startingTours, tours } = await services.tour.hasStartingTours(
+      account.aId,
+      startDate,
+      endDate
+    );
+    if (startingTours)
+      throw new ApiError(
+        CONFLICT,
+        "Du darfst nicht Touren überlappende Touren anlegen",
+        JSON.stringify({ tours })
       );
     const tour = await services.tour.createTour(req.body, account.aId);
     return res.status(CREATED).json(tour);
