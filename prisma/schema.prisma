@@ -14,7 +14,6 @@ model Account {
   password    String
   firstName   String   @default("Max")
   lastName    String   @default("Mustermann")
-  dateOfBirth DateTime @default(now())
   timestamp   DateTime @default(now())
   tokens      Token[]
   created     Tour[]   @relation("created")

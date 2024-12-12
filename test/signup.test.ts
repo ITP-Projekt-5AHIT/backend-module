@@ -4,13 +4,11 @@ import { AnyZodObject } from "zod";
 import { signUpType } from "../src/types/auth";
 import assert from "assert";
 import lodash from "lodash";
-import dayjs from "dayjs";
 
 const baseData: signUpType = {
   userName: "MaxMustermann",
   password: "Password123!",
   email: "max@mustermann.at",
-  dateOfBirth: dayjs("2000-01-01").toDate(),
   firstName: "Max",
   lastName: "Mustermann",
 };
@@ -68,13 +66,6 @@ describe("Auth/Signup-Validation", () => {
       buildBody({ password: null! })
     );
     const passwordOmitted = shouldFail(signUpSchema, omitBody("password"));
-  });
-  test.only("if null/ undefined/ omitted dateOfBirth will fail", () => {
-    const undefinedDoB = shouldFail(
-      signUpSchema,
-      buildBody({ dateOfBirth: undefined })
-    );
-    const DoBOmitted = shouldFail(signUpSchema, omitBody("dateOfBirth"));
   });
   test("if null/ undefined/ omitted firstName will fail", () => {
     const undefinedFirstName = shouldFail(
