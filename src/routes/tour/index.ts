@@ -19,7 +19,7 @@ router.post(
   controllers.tour.postSubscribeTour
 );
 router.get("/:tourId", [isTourGuide], controllers.tour.getTourDetails);
-router.delete("/", [validate(deleteTourSchema)], controllers.tour.deleteTour);
+router.delete("/:tId", [validate(deleteTourSchema)], controllers.tour.deleteTour);
 router.get("/", controllers.tour.getUserTour);
 router.delete(
   "/unsubscribe/:tId",

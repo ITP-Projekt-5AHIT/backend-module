@@ -8,8 +8,8 @@ export const deleteSubscriptionSchema = object({
 });
 
 export const deleteTourSchema = object({
-  body: object({
-    tourId: number({ message: "Eine Tourid muss angegeben werden" }).min(
+  params: object({
+    tId: coerce.number({ message: "Eine Tourid muss angegeben werden" }).min(
       0,
       "PK muss positiv sein"
     ),

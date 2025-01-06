@@ -12,7 +12,7 @@ export type tourType = Zod.infer<tourSchemaBody>;
 type subscribeSchemaBody = typeof subscribeSchema.shape.body;
 export type subscribeType = Zod.infer<subscribeSchemaBody>;
 
-type deleteTourSchemaBody = typeof deleteTourSchema.shape.body;
+type deleteTourSchemaBody = typeof deleteTourSchema.shape.params;
 export type deleteTourType = Zod.infer<deleteTourSchemaBody>;
 
 type deleteTourSubscriptionParams =

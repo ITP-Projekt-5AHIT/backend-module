@@ -48,10 +48,10 @@ export const getUserTour = catchAsync(async (req, res, next) => {
 });
 
 export const deleteTour = catchAsync(
-  async (req: Request<object, object, deleteTourType>, res, next) => {
-    const { tourId } = req.body;
+  async (req: Request<deleteTourType>, res, next) => {
+    const { tId } = req.params;
     const user = req.user as Account;
-    const deleted = await services.tour.deleteTour(tourId, user.aId);
+    const deleted = await services.tour.deleteTour(tId, user.aId);
     const status = deleted ? OK : BAD_REQUEST;
     return res.status(status).json({});
   }
