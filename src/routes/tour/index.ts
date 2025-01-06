@@ -12,6 +12,7 @@ import isTourGuide from "../../middlewares/tour-guide";
 const router = express.Router();
 export default router;
 
+router.get("/all", controllers.tour.getUserAllTours);
 router.post("/", [validate(tourSchema)], controllers.tour.postCreateTour);
 router.post(
   "/subscribe",

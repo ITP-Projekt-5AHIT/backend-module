@@ -6,7 +6,31 @@ import assert from "assert";
 import ApiError from "../../utils/apiError";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
 import { Tour } from "@prisma/client";
-import logger from "../../config/logger";
+
+export const findAllUserTours = async (aId: number) => {
+  const tours = await db.tour.findMany({
+    where: {
+      OR: [
+        {
+          participants: {
+            some: {
+              aId,
+            },
+          },
+        },
+        {
+          createdBy: {
+            aId,
+          },
+        },
+      ],
+    },
+    orderBy: {
+      startDate: "asc",
+    },
+  });
+  return tours;
+};
 
 export const hasStartingTours = async (
   aId: number,
@@ -208,6 +232,11 @@ export const findActiveTour = async (aId: number) => {
               },
             },
           ],
+        },
+        include: {
+          participants: true,
+          createdBy: true,
+          checkpoints: true,
         },
       })
   );

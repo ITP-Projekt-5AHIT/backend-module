@@ -39,12 +39,23 @@ export const deleteTourSubscription = catchAsync(
   }
 );
 
+export const getUserAllTours = catchAsync(async (req, res, next) => {
+  const { aId } = req.user as Account;
+  const tours = await services.tour.findAllUserTours(aId);
+  const mapped = tours.map((t) => {
+    return { ...t, isTourGuide: t && t.tourGuide == aId };
+  });
+  return res.status(OK).json({ tour: mapped });
+});
+
 export const getUserTour = catchAsync(async (req, res, next) => {
   const { aId } = req.user as Account;
   const activeTour = await services.tour.findActiveTour(aId);
   const status = activeTour ? OK : NOT_FOUND;
   const isTourGuide = activeTour && activeTour.tourGuide == aId;
-  return res.status(status).json({ tour: { ...activeTour, isTourGuide } });
+  const tourResponse =
+    activeTour == null ? null : { ...activeTour, isTourGuide };
+  return res.status(status).json({ tour: tourResponse });
 });
 
 export const deleteTour = catchAsync(
