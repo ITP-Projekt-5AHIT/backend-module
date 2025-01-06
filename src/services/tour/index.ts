@@ -201,25 +201,60 @@ export const deleteTour = async (
   return foundTour != null;
 };
 
-export const findActiveTour = async (aId: number) => {
-  const tours = await catchPrisma(
+export const findActiveOrNextTour = async (aId: number) => {
+  const condition = {
+    OR: [
+      {
+        createdBy: {
+          aId: Number(aId),
+        },
+      },
+      {
+        participants: {
+          some: {
+            aId: Number(aId),
+          },
+        },
+      },
+    ],
+  };
+  const selected = {
+    participants: {
+      select: {
+        aId: true,
+        firstName: true,
+        userName: true,
+      },
+    },
+    createdBy: {
+      select: {
+        aId: true,
+        userName: true,
+        firstName: true,
+      },
+    },
+    checkpoints: {
+      select: {
+        isMeetingPoint: true,
+        location: {
+          select: {
+            latitude: true,
+            longtitude: true,
+            houseNumber: true,
+            street: true,
+            postCode: true,
+            country: true,
+            routeDescription: true,
+          },
+        },
+      },
+    },
+  };
+  const activeTour = await catchPrisma(
     async () =>
       await db.tour.findFirst({
         where: {
-          OR: [
-            {
-              createdBy: {
-                aId: Number(aId),
-              },
-            },
-            {
-              participants: {
-                some: {
-                  aId: Number(aId),
-                },
-              },
-            },
-          ],
+          ...condition,
           AND: [
             {
               startDate: {
@@ -233,14 +268,24 @@ export const findActiveTour = async (aId: number) => {
             },
           ],
         },
-        include: {
-          participants: true,
-          createdBy: true,
-          checkpoints: true,
-        },
+        include: selected,
       })
   );
-  return tours;
+  if (activeTour != null) return activeTour;
+  const upcomingTour = await db.tour.findFirst({
+    where: {
+      ...condition,
+      endDate: {
+        gte: dayjs().toDate(),
+      },
+    },
+    include: selected,
+    orderBy: {
+      startDate: "asc",
+    },
+  });
+  console.log(upcomingTour);
+  return upcomingTour;
 };
 
 export const subscribeTour = async (accessCode: string, aId: number) => {

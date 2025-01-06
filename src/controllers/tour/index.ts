@@ -50,7 +50,7 @@ export const getUserAllTours = catchAsync(async (req, res, next) => {
 
 export const getUserTour = catchAsync(async (req, res, next) => {
   const { aId } = req.user as Account;
-  const activeTour = await services.tour.findActiveTour(aId);
+  const activeTour = await services.tour.findActiveOrNextTour(aId);
   const status = activeTour ? OK : NOT_FOUND;
   const isTourGuide = activeTour && activeTour.tourGuide == aId;
   const tourResponse =
