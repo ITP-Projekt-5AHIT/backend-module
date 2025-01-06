@@ -31,3 +31,4 @@ router.post(
   controllers.auth.postRenewToken
 );
 router.post('/logout', [auth], controllers.auth.postLogout);
+router.get('/profile', [auth], controllers.auth.getProfileInformation);
