@@ -1,6 +1,12 @@
 import dayjs from "dayjs";
 import { coerce, number, object, string } from "zod";
 
+export const deleteSubscriptionSchema = object({
+  params: object({
+    tId: coerce.number({ message: "Tour-Id fehlt" }),
+  }),
+});
+
 export const deleteTourSchema = object({
   body: object({
     tourId: number({ message: "Eine Tourid muss angegeben werden" }).min(

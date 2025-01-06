@@ -1,6 +1,7 @@
-import e, { Request } from "express";
+import { NextFunction, Request, Response } from "express";
 import catchAsync from "../../utils/catchAsync";
 import {
+  deleteSubscriptionType,
   deleteTourType,
   loadedTourGuideTours,
   subscribeType,
@@ -18,7 +19,25 @@ import {
 } from "http-status";
 import ApiError from "../../utils/apiError";
 import assert from "assert";
-import errorResponseType from "../../types/error";
+
+export const deleteTourSubscription = catchAsync(
+  async (
+    req: Request<deleteSubscriptionType>,
+    res: Response,
+    _next: NextFunction
+  ) => {
+    const { tId } = req.params;
+    const { aId } = req.user as Account;
+    const tour = await services.tour.loadTourById(tId);
+    assert(tour != null, new ApiError(NOT_FOUND, "Tour nicht gefunden"));
+    assert(
+      tour.participants.some((p) => p.aId == aId),
+      new ApiError(CONFLICT, "Kein Teilnehmer dieser Tour")
+    );
+    await services.tour.unsubscribeTour(aId, tId);
+    return res.status(OK).json({});
+  }
+);
 
 export const getUserTour = catchAsync(async (req, res, next) => {
   const { aId } = req.user as Account;

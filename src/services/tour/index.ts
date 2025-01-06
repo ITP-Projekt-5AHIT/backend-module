@@ -47,6 +47,21 @@ export const hasStartingTours = async (
   return { tours: foundTours.map((t) => t.tId), startingTours };
 };
 
+export const unsubscribeTour = async (aId: number, tId: number) => {
+  await db.tour.update({
+    where: {
+      tId: Number(tId),
+    },
+    data: {
+      participants: {
+        disconnect: {
+          aId: Number(aId),
+        },
+      },
+    },
+  });
+};
+
 export const loadTourById = async (tId: number) => {
   assert(
     tId,

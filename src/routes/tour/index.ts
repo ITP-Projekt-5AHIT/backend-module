@@ -1,6 +1,7 @@
 import express from "express";
 import controllers from "../../controllers";
 import {
+  deleteSubscriptionSchema,
   deleteTourSchema,
   subscribeSchema,
   tourSchema,
@@ -18,9 +19,10 @@ router.post(
   controllers.tour.postSubscribeTour
 );
 router.get("/:tourId", [isTourGuide], controllers.tour.getTourDetails);
-router.delete(
-  "/",
-  [validate(deleteTourSchema)],
-  controllers.tour.deleteTour
-);
+router.delete("/", [validate(deleteTourSchema)], controllers.tour.deleteTour);
 router.get("/", controllers.tour.getUserTour);
+router.delete(
+  "/:tId",
+  [validate(deleteSubscriptionSchema)],
+  controllers.tour.deleteTourSubscription
+);

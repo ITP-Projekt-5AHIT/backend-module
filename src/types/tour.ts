@@ -1,5 +1,10 @@
 import { Tour } from "@prisma/client";
-import { deleteTourSchema, subscribeSchema, tourSchema } from "../schema/tour";
+import {
+  deleteSubscriptionSchema,
+  deleteTourSchema,
+  subscribeSchema,
+  tourSchema,
+} from "../schema/tour";
 
 type tourSchemaBody = typeof tourSchema.shape.body;
 export type tourType = Zod.infer<tourSchemaBody>;
@@ -9,6 +14,10 @@ export type subscribeType = Zod.infer<subscribeSchemaBody>;
 
 type deleteTourSchemaBody = typeof deleteTourSchema.shape.body;
 export type deleteTourType = Zod.infer<deleteTourSchemaBody>;
+
+type deleteTourSubscriptionParams =
+  typeof deleteSubscriptionSchema.shape.params;
+export type deleteSubscriptionType = Zod.infer<deleteTourSubscriptionParams>;
 
 export type tourDetails = Omit<Tour, "accessCode" | "tourGuide"> & {
   accessCode: string | null;
