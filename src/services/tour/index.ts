@@ -7,6 +7,39 @@ import ApiError from "../../utils/apiError";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
 import { Tour } from "@prisma/client";
 
+const selectedAll = {
+  participants: {
+    select: {
+      aId: true,
+      firstName: true,
+      userName: true,
+    },
+  },
+  createdBy: {
+    select: {
+      aId: true,
+      userName: true,
+      firstName: true,
+    },
+  },
+  checkpoints: {
+    select: {
+      isMeetingPoint: true,
+      location: {
+        select: {
+          latitude: true,
+          longtitude: true,
+          houseNumber: true,
+          street: true,
+          postCode: true,
+          country: true,
+          routeDescription: true,
+        },
+      },
+    },
+  },
+};
+
 export const findAllUserTours = async (aId: number) => {
   const tours = await db.tour.findMany({
     where: {
@@ -172,6 +205,7 @@ export const createTour = async (tour: tourType, aId: number) => {
           accessCode: String(tourCode),
           name: tour.name,
         },
+        include: selectedAll,
       }),
     new ApiError(
       INTERNAL_SERVER_ERROR,
@@ -218,38 +252,6 @@ export const findActiveOrNextTour = async (aId: number) => {
       },
     ],
   };
-  const selected = {
-    participants: {
-      select: {
-        aId: true,
-        firstName: true,
-        userName: true,
-      },
-    },
-    createdBy: {
-      select: {
-        aId: true,
-        userName: true,
-        firstName: true,
-      },
-    },
-    checkpoints: {
-      select: {
-        isMeetingPoint: true,
-        location: {
-          select: {
-            latitude: true,
-            longtitude: true,
-            houseNumber: true,
-            street: true,
-            postCode: true,
-            country: true,
-            routeDescription: true,
-          },
-        },
-      },
-    },
-  };
   const activeTour = await catchPrisma(
     async () =>
       await db.tour.findFirst({
@@ -268,7 +270,7 @@ export const findActiveOrNextTour = async (aId: number) => {
             },
           ],
         },
-        include: selected,
+        include: selectedAll,
       })
   );
   if (activeTour != null) return activeTour;
@@ -279,12 +281,11 @@ export const findActiveOrNextTour = async (aId: number) => {
         gte: dayjs().toDate(),
       },
     },
-    include: selected,
+    include: selectedAll,
     orderBy: {
       startDate: "asc",
     },
   });
-  console.log(upcomingTour);
   return upcomingTour;
 };
 
