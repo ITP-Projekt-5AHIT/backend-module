@@ -44,25 +44,6 @@ export const convertError = (
 ) => {
   let error: Error | ApiError = err;
 
-  // if (err instanceof PrismaClientValidationError) {
-  //   const validationError: PrismaClientValidationError = err;
-  //   error = new ApiError(
-  //     INTERNAL_SERVER_ERROR,
-  //     validationError.message.toString(),
-  //     true
-  //   );
-  // }
-
-  // if (err instanceof PrismaClientKnownRequestError) {
-  //   const dbError: PrismaClientKnownRequestError = err;
-  //   error = new ApiError(
-  //     INTERNAL_SERVER_ERROR,
-  //     "Error occurred with db transaction;" +
-  //       ` code: ${dbError.code} | meta: ${dbError.meta} | message: ${dbError.message}`,
-  //     true
-  //   );
-  // }
-
   if (!(err instanceof ApiError)) {
     error = new ApiError(
       INTERNAL_SERVER_ERROR,
@@ -73,7 +54,7 @@ export const convertError = (
     );
   }
 
-  next(error);
+  return next(error);
 };
 
 export const handleError = async (
@@ -82,23 +63,22 @@ export const handleError = async (
   res: Response,
   _next: NextFunction
 ) => {
-  console.error(err);
   if (!err.isOperational) {
     await handleSevereErrors(err.message);
     return;
   }
   if (res.headersSent) return;
   const errorResponse: errorResponseType = {
-    name: err.name,
-    message: err.message,
-    statusCode: err.statusCode,
-    status: err.status,
+    name: err?.name,
+    message: err?.message,
+    statusCode: err?.statusCode,
+    status: err?.status,
   };
   if (config.NODE_ENV === "development") {
     errorResponse.metaInfo = err.metaInfo;
     errorResponse.stack = err.stack;
   }
-  res.status(err.statusCode).json(errorResponse);
+  return res.status(err.statusCode).json(errorResponse);
 };
 
 export const handleSevereErrors = async (e?: string) => {
