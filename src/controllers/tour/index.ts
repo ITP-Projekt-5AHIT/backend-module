@@ -89,8 +89,8 @@ export const getTourDetails = catchAsync(async (req, res, next) => {
       "Du musst entweder Ersteller oder Teilnehmer sein, um die Daten sehen zu dürfen"
     )
   );
-  const loadedData = await services.tour.pickTourData(tour, isTourGuide);
-  return res.status(OK).json({ ...loadedData });
+  // const loadedData = await services.tour.pickTourData(tour, isTourGuide);
+  return res.status(OK).json({ ...tour, isTourGuide });
 });
 
 export const postCreateTour = catchAsync(

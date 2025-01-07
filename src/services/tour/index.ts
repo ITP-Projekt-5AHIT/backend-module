@@ -131,7 +131,7 @@ export const loadTourById = async (tId: number) => {
   );
   const tour = await db.tour.findFirst({
     where: { tId: Number(tId) },
-    include: { participants: true },
+    include: selectedAll,
   });
   assert(tour != null, new ApiError(NOT_FOUND, "Tour konnte nicht gefunden"));
   return tour;
