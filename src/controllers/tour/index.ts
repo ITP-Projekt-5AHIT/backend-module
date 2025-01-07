@@ -29,6 +29,10 @@ export const deleteTourSubscription = catchAsync(
     const { tId } = req.params;
     const { aId } = req.user as Account;
     const tour = await services.tour.loadTourById(tId);
+    assert(
+      tour.tourGuide != aId,
+      new ApiError(CONFLICT, "Als Tourguiden nicht möglich")
+    );
     assert(tour != null, new ApiError(NOT_FOUND, "Tour nicht gefunden"));
     assert(
       tour.participants.some((p) => p.aId == aId),
