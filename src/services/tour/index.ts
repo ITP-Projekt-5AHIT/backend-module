@@ -61,6 +61,7 @@ export const findAllUserTours = async (aId: number) => {
     orderBy: {
       startDate: "asc",
     },
+    include: selectedAll,
   });
   return tours;
 };
