@@ -294,9 +294,7 @@ export const subscribeTour = async (accessCode: string, aId: number) => {
     async () =>
       await db.tour.findFirst({
         where: { accessCode },
-        include: {
-          participants: true,
-        },
+        include: selectedAll,
       })
   );
   assert(
