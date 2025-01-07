@@ -57,14 +57,14 @@ export const convertError = (
   return next(error);
 };
 
-export const handleError = async (
-  err: ApiError,
+export const handleError = (
+  err: Error,
   _req: Request,
   res: Response,
   _next: NextFunction
-) => {
-  if (!err.isOperational) {
-    await handleSevereErrors(err.message);
+): void => {
+  if (!(err instanceof ApiError) || !err?.isOperational) {
+    handleSevereErrors(err.message);
     return;
   }
   if (res.headersSent) return;
@@ -78,7 +78,7 @@ export const handleError = async (
     errorResponse.metaInfo = err.metaInfo;
     errorResponse.stack = err.stack;
   }
-  return res.status(err.statusCode).json(errorResponse);
+  res.status(err.statusCode).json(errorResponse);
 };
 
 export const handleSevereErrors = async (e?: string) => {
