@@ -24,6 +24,7 @@ const selectedAll = {
   },
   checkpoints: {
     select: {
+      cId: true,
       isMeetingPoint: true,
       location: {
         select: {
