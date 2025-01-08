@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import ApiError from "../utils/apiError";
 import { server } from "../index";
 import db from "../utils/db";
-import httpStatus, { INTERNAL_SERVER_ERROR } from "http-status";
+import httpStatus, { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "http-status";
 import errorResponseType from "../types/error";
 import config from "../config/config";
 import { Prisma } from "@prisma/client";
@@ -45,6 +45,9 @@ export const convertError = (
 ) => {
   let error: Error | ApiError = err;
 
+  if (err instanceof SyntaxError && "body" in error) {
+    error = new ApiError(BAD_REQUEST, "Syntax Fehler in der Response");
+  }
   if (!(err instanceof ApiError)) {
     error = new ApiError(
       INTERNAL_SERVER_ERROR,
