@@ -12,6 +12,7 @@ const selectedAll = {
   time: true,
   isMeetingPoint: true,
   tourId: true,
+  description: true,
   location: {
     select: {
       lId: true,
