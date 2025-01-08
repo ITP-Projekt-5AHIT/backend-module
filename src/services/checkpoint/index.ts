@@ -7,6 +7,25 @@ import ApiError from "../../utils/apiError";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
 import { time } from "console";
 
+const selectedAll = {
+  name: true,
+  time: true,
+  isMeetingPoint: true,
+  tourId: true,
+  location: {
+    select: {
+      lId: true,
+      postCode: true,
+      country: true,
+      street: true,
+      houseNumber: true,
+      latitude: true,
+      longtitude: true,
+      routeDescription: true,
+    },
+  },
+};
+
 export const isOnTour = async (tourId: number, aId: number) => {
   const tour = await db.tour.findFirst({
     where: {
@@ -39,16 +58,14 @@ export const loadCheckPoints = async (tourId: number, limit: number) => {
     where: {
       tourId: Number(tourId),
       time: {
-        lt: dayjs().toDate(),
+        gte: dayjs().toDate(),
       },
     },
     take: limit,
-    include: {
-      location: true,
-    },
     orderBy: {
       time: "asc",
     },
+    select: selectedAll,
   });
   return checkpoints;
 };
