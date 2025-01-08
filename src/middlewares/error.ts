@@ -45,10 +45,10 @@ export const convertError = (
 ) => {
   let error: Error | ApiError = err;
 
-  if (err instanceof SyntaxError && "body" in error) {
+  if (error instanceof SyntaxError && "body" in error) {
     error = new ApiError(BAD_REQUEST, "Syntax Fehler in der Response");
   }
-  if (!(err instanceof ApiError)) {
+  if (!(error instanceof ApiError)) {
     error = new ApiError(
       INTERNAL_SERVER_ERROR,
       err.message,
