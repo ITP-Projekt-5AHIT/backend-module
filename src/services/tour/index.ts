@@ -32,6 +32,7 @@ const selectedAll = {
       description: true,
       location: {
         select: {
+          city: true,
           lId: true,
           postCode: true,
           country: true,

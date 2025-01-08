@@ -59,6 +59,7 @@ model Location {
   lId              Int          @id @unique @default(autoincrement())
   postCode         Int
   country          String
+  city             String?
   street           String
   houseNumber      String?
   latitude         Int

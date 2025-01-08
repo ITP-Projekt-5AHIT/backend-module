@@ -15,6 +15,7 @@ const selectedAll = {
   description: true,
   location: {
     select: {
+      city: true,
       lId: true,
       postCode: true,
       country: true,
@@ -96,11 +97,12 @@ export const createCheckPoint = async (checkpoint: checkPointType) => {
 
   const getLocationId = async () => {
     if (checkpoint.location) {
-      const { country, houseNumber, latitude, longtitude, postCode, street } =
+      const { country, houseNumber, latitude, longtitude, postCode, street, city } =
         checkpoint.location;
       return (
         await db.location.create({
           data: {
+            city,
             country,
             houseNumber,
             latitude,
