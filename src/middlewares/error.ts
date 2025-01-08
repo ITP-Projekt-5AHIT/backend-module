@@ -46,7 +46,7 @@ export const convertError = (
   let error: Error | ApiError = err;
 
   if (error instanceof SyntaxError && "body" in error) {
-    error = new ApiError(BAD_REQUEST, "Syntax Fehler in der Response");
+    error = new ApiError(BAD_REQUEST, "Syntaxfehler in der Request");
   }
   if (!(error instanceof ApiError)) {
     error = new ApiError(
