@@ -129,12 +129,10 @@ export const createCheckPoint = async (checkpoint: checkPointType) => {
           name: checkpoint.name,
           time: dayjs(checkpoint.time!).toDate(),
           tourId: checkpoint.tourId,
+          description: checkpoint.description,
           lId: lId!,
         },
-        include: {
-          location: true,
-          tour: true,
-        },
+        select: selectedAll,
       })
   );
 };
