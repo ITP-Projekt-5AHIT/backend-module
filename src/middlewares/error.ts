@@ -6,6 +6,7 @@ import httpStatus, { INTERNAL_SERVER_ERROR } from "http-status";
 import errorResponseType from "../types/error";
 import config from "../config/config";
 import { Prisma } from "@prisma/client";
+import logger from "../config/logger";
 
 export const catchPrisma = async <T>(
   cb: () => T,
@@ -53,7 +54,6 @@ export const convertError = (
       false
     );
   }
-
   return next(error);
 };
 
@@ -67,6 +67,7 @@ export const handleError = (
     handleSevereErrors(err.message);
     return;
   }
+  logger.warn(err.message);
   if (res.headersSent) return;
   const errorResponse: errorResponseType = {
     name: err?.name,
@@ -82,12 +83,7 @@ export const handleError = (
 };
 
 export const handleSevereErrors = async (e?: string) => {
-  try {
-    await db.$disconnect();
-  } catch {}
-  if (server)
-    await Promise.resolve(
-      new Promise((resolve, _reject) => server.close(resolve))
-    );
-  process.exit(1);
+  logger.error("Server closing due to severe error!");
+  await db.$disconnect();
+  server.close(() => process.exit(1));
 };
