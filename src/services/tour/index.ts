@@ -6,6 +6,7 @@ import assert from "assert";
 import ApiError from "../../utils/apiError";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
 import { Tour } from "@prisma/client";
+import services from "..";
 
 const selectedAll = {
   participants: {
@@ -24,16 +25,19 @@ const selectedAll = {
   },
   checkpoints: {
     select: {
-      cId: true,
+      name: true,
+      time: true,
       isMeetingPoint: true,
+      tourId: true,
       location: {
         select: {
-          latitude: true,
-          longtitude: true,
-          houseNumber: true,
-          street: true,
+          lId: true,
           postCode: true,
           country: true,
+          street: true,
+          houseNumber: true,
+          latitude: true,
+          longtitude: true,
           routeDescription: true,
         },
       },
