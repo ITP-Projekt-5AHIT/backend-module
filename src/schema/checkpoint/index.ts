@@ -1,6 +1,12 @@
 import { coerce, object, string } from "zod";
 import { locationSchema } from "../location";
 
+export const deleteCheckpointSchema = object({
+  params: object({
+    cId: coerce.number({ message: "Checkpoint-ID missing" }),
+  }),
+});
+
 export const checkpointSchema = object({
   body: object({
     name: string({ message: "Der Name fehlt" })

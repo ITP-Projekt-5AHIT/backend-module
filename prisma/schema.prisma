@@ -62,8 +62,8 @@ model Location {
   city             String?
   street           String
   houseNumber      String?
-  latitude         Int
-  longtitude       Int
+  latitude         Decimal
+  longtitude       Decimal
   routeDescription String?
   Attraction       Attraction[]
   Checkpoint       Checkpoint[]

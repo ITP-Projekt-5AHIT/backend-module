@@ -1,7 +1,10 @@
 import { Router } from "express";
 import controllers from "../../controllers";
 import { validate } from "../../middlewares/validation";
-import { checkpointSchema } from "../../schema/checkpoint";
+import {
+  checkpointSchema,
+  deleteCheckpointSchema,
+} from "../../schema/checkpoint";
 const router = Router();
 export default router;
 
@@ -12,3 +15,8 @@ router.post(
 );
 router.get("/:tourId", controllers.cp.getCheckPoints);
 router.get("/next/:tourId", controllers.cp.getNextCheckPoint);
+router.delete(
+  "/:cId",
+  [validate(deleteCheckpointSchema)],
+  controllers.cp.deleteCheckpoint
+);

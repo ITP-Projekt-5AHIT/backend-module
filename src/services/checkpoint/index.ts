@@ -28,6 +28,27 @@ const selectedAll = {
   },
 };
 
+export const deleteCheckpoint = async (cId: number) => {
+  await db.checkpoint.delete({
+    where: {
+      cId,
+    },
+  });
+};
+
+export const findCheckPointByCId = async (cId: number) => {
+  const checkpoint = await db.checkpoint.findUnique({
+    where: {
+      cId,
+    },
+    include: {
+      tour: true,
+    },
+  });
+  assert(checkpoint != null, new ApiError(NOT_FOUND, "Checkpoint not found!"));
+  return checkpoint;
+};
+
 export const isOnTour = async (tourId: number, aId: number) => {
   const tour = await db.tour.findFirst({
     where: {
@@ -97,8 +118,15 @@ export const createCheckPoint = async (checkpoint: checkPointType) => {
 
   const getLocationId = async () => {
     if (checkpoint.location) {
-      const { country, houseNumber, latitude, longtitude, postCode, street, city } =
-        checkpoint.location;
+      const {
+        country,
+        houseNumber,
+        latitude,
+        longtitude,
+        postCode,
+        street,
+        city,
+      } = checkpoint.location;
       return (
         await db.location.create({
           data: {
