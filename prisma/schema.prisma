@@ -39,7 +39,7 @@ model Tour {
   tourGuide    Int
   accessCode   String       @unique
   checkpoints  Checkpoint[] @relation("tourCheckPoints")
-  createdBy    Account      @relation("created", fields: [tourGuide], references: [aId])
+  createdBy    Account      @relation("created", fields: [tourGuide], references: [aId], onDelete: Cascade)
   participants Account[]    @relation("joined")
   attractions  Attraction[] @relation("tourAttractions")
 }
@@ -78,5 +78,5 @@ model Checkpoint {
   lId            Int
   tourId         Int
   location       Location @relation(fields: [lId], references: [lId])
-  tour           Tour     @relation("tourCheckPoints", fields: [tourId], references: [tId])
+  tour           Tour     @relation("tourCheckPoints", fields: [tourId], references: [tId], onDelete: Cascade)
 }
