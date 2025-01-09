@@ -339,5 +339,5 @@ export const subscribeTour = async (accessCode: string, aId: number) => {
     account,
     new ApiError(INTERNAL_SERVER_ERROR, "Bitte probiere es erneut")
   );
-  return foundTour;
+  return { ...foundTour, isTourGuide: false };
 };
