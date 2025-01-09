@@ -5,13 +5,13 @@ import db from "../../utils/db";
 import dayjs from "dayjs";
 import ApiError from "../../utils/apiError";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
-import { time } from "console";
 
 const selectedAll = {
   name: true,
   time: true,
   isMeetingPoint: true,
   tourId: true,
+  cId: true,
   description: true,
   location: {
     select: {
