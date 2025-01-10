@@ -124,3 +124,25 @@ export const postSubscribeTour = catchAsync(
     return res.status(OK).json({ tour });
   }
 );
+
+export const getDistance = catchAsync(
+  async (
+    req: Request<
+      object,
+      object,
+      object,
+      { longtitude: number; latitude: number; lId: number }
+    >,
+    res: Response,
+    _next: NextFunction
+  ) => {
+    const { lId, latitude, longtitude } = req.query;
+    const location = await services.loc.findLocationByLId(lId);
+    const distances = await services.loc.getDistance(
+      location,
+      longtitude,
+      latitude
+    );
+    return res.status(OK).json({ distances });
+  }
+);

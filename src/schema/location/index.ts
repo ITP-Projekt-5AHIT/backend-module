@@ -9,6 +9,18 @@
  */
 
 import { number, object, string } from "zod";
+import validator from "validator";
+
+export const queryCooridnateSchema = object({
+  query: object({
+    longtitude: number({ message: "Longtitude fehlt" }),
+    latitude: number({ message: "Latitude fehlt" }),
+    lId: number({ message: "Location-Id fehlt" }),
+  }).refine(
+    (data) => validator.isLatLong(`${data.latitude}, ${data.longtitude}`),
+    { message: "Koordinaten-Format ist nicht gültig" }
+  ),
+});
 
 export const locationSchema = object({
   postCode: number({ message: "Die PLZ fehlt" }).min(0, {
