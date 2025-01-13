@@ -1,5 +1,5 @@
 import { test } from "mocha";
-import { signUpSchema } from "../src/schema/auth";
+import { signUpSchema } from "../src/schema/auth.schema";
 import { AnyZodObject } from "zod";
 import { signUpType } from "../src/types/auth";
 import assert from "assert";

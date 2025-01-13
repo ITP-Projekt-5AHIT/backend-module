@@ -15,9 +15,9 @@ import {
   generateTokens,
   handlePasswordReset,
   isValidToken,
-} from "../services/auth";
+} from "../services/auth.service";
 import catchAsync from "../utils/catchAsync";
-import { sendPwdResetMail } from "../services/mail/index";
+import { sendPwdResetMail } from "../services/mail.service";
 import { TOKEN_TYPE } from "../types/token";
 import { OK } from "http-status";
 import { Account } from "@prisma/client";

@@ -1,7 +1,7 @@
 import express, { NextFunction } from "express";
-import authRoutes from "./auth";
-import tourRoutes from "./tour";
-import checkPointRoutes from "./checkpoint";
+import authRoutes from "./auth.routes";
+import tourRoutes from "./tour.routes";
+import checkPointRoutes from "./checkpoint.routes";
 import { auth } from "../middlewares/auth";
 import isTourGuide from "../middlewares/tour-guide";
 import ApiError from "../utils/apiError";

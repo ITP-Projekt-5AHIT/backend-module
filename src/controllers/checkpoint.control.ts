@@ -6,7 +6,7 @@ import { Account, Tour } from "@prisma/client";
 import { checkPointType } from "../types/checkpoint";
 import { Request } from "express";
 import services from "../services";
-import { isOnTour } from "../services/checkpoint";
+import { isOnTour } from "../services/checkpoint.service";
 import dayjs from "dayjs";
 
 export const getNextCheckPoint = catchAsync(async (req, res, next) => {

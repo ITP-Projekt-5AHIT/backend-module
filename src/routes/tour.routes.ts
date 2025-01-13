@@ -1,14 +1,14 @@
 import express from "express";
-import controllers from "../../controllers";
+import controllers from "../controllers";
 import {
   deleteSubscriptionSchema,
   deleteTourSchema,
   subscribeSchema,
   tourSchema,
-} from "../../schema/tour";
-import { validate } from "../../middlewares/validation";
-import isTourGuide from "../../middlewares/tour-guide";
-import { queryCooridnateSchema } from "../../schema/location";
+} from "../schema/tour.schema";
+import { validate } from "../middlewares/validation";
+import isTourGuide from "../middlewares/tour-guide";
+import { queryCooridnateSchema } from "../schema/location.schema";
 
 const router = express.Router();
 export default router;

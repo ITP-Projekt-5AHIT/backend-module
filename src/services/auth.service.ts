@@ -1,14 +1,14 @@
 import assert from "assert";
-import { loginType, signUpType } from "../../types/auth";
-import db from "../../utils/db";
+import { loginType, signUpType } from "../types/auth";
+import db from "../utils/db";
 import bcrypt from "bcrypt";
 import { Account, Token } from "@prisma/client";
-import { getExpirationTime, TOKEN_TYPE, tokenType } from "../../types/token";
+import { getExpirationTime, TOKEN_TYPE, tokenType } from "../types/token";
 import dayjs from "dayjs";
-import config from "../../config/config";
+import config from "../config/config";
 import jwt from "jsonwebtoken";
-import ApiError from "../../utils/apiError";
-import { catchPrisma } from "../../middlewares/error";
+import ApiError from "../utils/apiError";
+import { catchPrisma } from "../middlewares/error";
 import { NOT_FOUND, TOO_MANY_REQUESTS } from "http-status";
 import { omit } from "lodash";
 

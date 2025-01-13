@@ -1,5 +1,5 @@
 import { test } from "mocha";
-import { loginSchema } from "../src/schema/auth";
+import { loginSchema } from "../src/schema/auth.schema";
 import { AnyZodObject, boolean } from "zod";
 import { loginType } from "../src/types/auth";
 import assert from "assert";

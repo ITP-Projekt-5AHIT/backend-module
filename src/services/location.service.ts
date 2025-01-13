@@ -1,6 +1,6 @@
 import { NOT_FOUND } from "http-status";
-import ApiError from "../../utils/apiError";
-import db from "../../utils/db";
+import ApiError from "../utils/apiError";
+import db from "../utils/db";
 import assert from "assert";
 import {
   Client,
@@ -10,7 +10,7 @@ import {
   TravelMode,
 } from "@googlemaps/google-maps-services-js";
 import { Location } from "@prisma/client";
-import config from "../../config/config";
+import config from "../config/config";
 const client = new Client({});
 
 export const findLocationByLId = async (lId: number) => {

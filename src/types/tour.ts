@@ -4,7 +4,7 @@ import {
   deleteTourSchema,
   subscribeSchema,
   tourSchema,
-} from "../schema/tour";
+} from "../schema/tour.schema";
 
 type tourSchemaBody = typeof tourSchema.shape.body;
 export type tourType = Zod.infer<tourSchemaBody>;
