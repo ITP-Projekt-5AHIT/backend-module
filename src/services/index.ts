@@ -3,6 +3,7 @@ import * as tourService from "./tour.service";
 import * as checkPointService from "./checkpoint.service";
 import * as locationService from "./location.service";
 import * as mailService from "./mail.service";
+import * as albumService from "./album.service";
 
 export default {
   auth: authService,
@@ -10,4 +11,5 @@ export default {
   cp: checkPointService,
   loc: locationService,
   mail: mailService,
+  album: albumService,
 };

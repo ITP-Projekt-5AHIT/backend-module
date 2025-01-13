@@ -23,6 +23,11 @@ const selectedAll = {
       firstName: true,
     },
   },
+  album: {
+    select: {
+      alId: true,
+    },
+  },
   checkpoints: {
     select: {
       cId: true,

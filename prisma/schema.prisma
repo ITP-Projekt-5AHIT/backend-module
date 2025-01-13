@@ -42,6 +42,7 @@ model Tour {
   createdBy    Account      @relation("created", fields: [tourGuide], references: [aId], onDelete: Cascade)
   participants Account[]    @relation("joined")
   attractions  Attraction[] @relation("tourAttractions")
+  album        Album?
 }
 
 model Attraction {
@@ -79,4 +80,12 @@ model Checkpoint {
   tourId         Int
   location       Location @relation(fields: [lId], references: [lId])
   tour           Tour     @relation("tourCheckPoints", fields: [tourId], references: [tId], onDelete: Cascade)
+}
+
+model Album {
+  alId      Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  photos    String[] @default([])
+  tId       Int      @unique
+  tour      Tour     @relation(fields: [tId], references: [tId], onDelete: Cascade, onUpdate: Cascade)
 }
