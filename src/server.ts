@@ -5,10 +5,12 @@ import { convertError, handleError } from "./middlewares/error";
 import passport from "passport";
 import JwtStrategy from "./middlewares/auth";
 import { queryParser } from "express-query-parser";
+import helmet from "helmet";
 
 const app = express();
 export default app;
 
+app.use(helmet());
 app.use(cors());
 app.use(json());
 app.use(urlencoded({ extended: true }));
