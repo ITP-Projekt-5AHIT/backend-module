@@ -1,6 +1,6 @@
-import * as authController from "./auth";
-import * as tourController from "./tour";
-import * as checkPointController from "./checkpoint";
+import * as authController from "./auth.control";
+import * as tourController from "./tour.control";
+import * as checkPointController from "./checkpoint.control";
 
 export default {
   auth: authController,
