@@ -7,3 +7,4 @@ const router = Router();
 export default router;
 
 router.post("/", [validate(postImageSchema)], controllers.album.postAddImage);
+router.get("/:alId", controllers.album.getAlbum);

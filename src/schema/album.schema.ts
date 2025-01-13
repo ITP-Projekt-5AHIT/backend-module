@@ -7,10 +7,21 @@ export const postImageSchema = object({
         message: "Filename zu kurz",
       })
       .max(128, { message: "Filename zu lang" }),
-    tId: number({ message: "Tour-ID fehlt" })
+    tId: number({ message: "Tour-Id fehlt" })
       .min(0, {
-        message: "Tour-ID muss positiv sein",
+        message: "Tour-Id muss positiv sein",
       })
-      .max(Number.MAX_VALUE, "Tour-ID zu groß"),
+      .max(Number.MAX_VALUE, "Tour-Id zu groß"),
+  }),
+});
+
+export const getAlbumSchema = object({
+  params: object({
+    alId: coerce
+      .number({ message: "Album-Id fehlt" })
+      .min(0, {
+        message: "Album-Id muss positiv sein",
+      })
+      .max(Number.MAX_VALUE, "Album-Id zu groß"),
   }),
 });

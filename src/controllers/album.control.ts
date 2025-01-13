@@ -1,11 +1,33 @@
 import { NextFunction, Request, Response } from "express";
 import catchAsync from "../utils/catchAsync";
-import { postImageType } from "../types/album";
+import { getAlbumType, postImageType } from "../types/album";
 import services from "../services";
 import assert from "assert";
 import { Account } from "@prisma/client";
 import ApiError from "../utils/apiError";
 import { OK, UNAUTHORIZED } from "http-status";
+
+export const getAlbum = catchAsync(
+  async (req: Request<getAlbumType>, res: Response, next: NextFunction) => {
+    const { alId } = req.params;
+    const { aId } = req.user as Account;
+
+    const album = await services.album.findAlbumById(Number(alId));
+    const tour = await services.tour.loadTourById(album.tId);
+
+    const isMember =
+      tour.tourGuide == aId || tour.participants.some((p) => p.aId == aId);
+    assert(
+      isMember,
+      new ApiError(
+        UNAUTHORIZED,
+        "Only members of this tour are allowed to upload images"
+      )
+    );
+
+    return res.status(OK).json(album);
+  }
+);
 
 export const postAddImage = catchAsync(
   async (
