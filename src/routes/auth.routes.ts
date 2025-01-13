@@ -1,14 +1,14 @@
 import express from "express";
-import controllers from "../../controllers";
-import { validate } from "../../middlewares/validation";
+import controllers from "../controllers";
+import { validate } from "../middlewares/validation";
 import {
   loginSchema,
   renewTokenSchema,
   requestPasswordResetSchema,
   setPasswordSchema,
   signUpSchema,
-} from "../../schema/auth";
-import { auth } from "../../middlewares/auth";
+} from "../schema/auth.schema";
+import { auth } from "../middlewares/auth";
 
 const router = express.Router();
 export default router;

@@ -6,7 +6,7 @@ import {
 import { TOKEN_TYPE, tokenType } from "../types/token";
 import ApiError from "../utils/apiError";
 import httpStatus, { UNAUTHORIZED } from "http-status";
-import * as authService from "../services/auth";
+import * as authService from "../services/auth.service";
 import { NextFunction, Request, Response } from "express";
 import config from "../config/config";
 import passport, { DoneCallback } from "passport";

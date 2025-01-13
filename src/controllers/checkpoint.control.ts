@@ -1,12 +1,12 @@
 import { BAD_REQUEST, CONFLICT, CREATED, OK, UNAUTHORIZED } from "http-status";
-import ApiError from "../../utils/apiError";
-import catchAsync from "../../utils/catchAsync";
+import ApiError from "../utils/apiError";
+import catchAsync from "../utils/catchAsync";
 import assert from "assert";
 import { Account, Tour } from "@prisma/client";
-import { checkPointType } from "../../types/checkpoint";
+import { checkPointType } from "../types/checkpoint";
 import { Request } from "express";
-import services from "../../services";
-import { isOnTour } from "../../services/checkpoint";
+import services from "../services";
+import { isOnTour } from "../services/checkpoint.service";
 import dayjs from "dayjs";
 
 export const getNextCheckPoint = catchAsync(async (req, res, next) => {

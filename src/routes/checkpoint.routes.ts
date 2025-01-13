@@ -1,10 +1,10 @@
 import { Router } from "express";
-import controllers from "../../controllers";
-import { validate } from "../../middlewares/validation";
+import controllers from "../controllers";
+import { validate } from "../middlewares/validation";
 import {
   checkpointSchema,
   deleteCheckpointSchema,
-} from "../../schema/checkpoint";
+} from "../schema/checkpoint.schema";
 const router = Router();
 export default router;
 

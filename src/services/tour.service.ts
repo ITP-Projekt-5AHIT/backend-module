@@ -1,12 +1,12 @@
 import dayjs from "dayjs";
-import { tourDetails, tourType } from "../../types/tour";
-import db, { generateAccessCode } from "../../utils/db";
-import { catchPrisma } from "../../middlewares/error";
+import { tourDetails, tourType } from "../types/tour";
+import db, { generateAccessCode } from "../utils/db";
+import { catchPrisma } from "../middlewares/error";
 import assert from "assert";
-import ApiError from "../../utils/apiError";
+import ApiError from "../utils/apiError";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
 import { Tour } from "@prisma/client";
-import services from "..";
+import services from ".";
 
 const selectedAll = {
   participants: {

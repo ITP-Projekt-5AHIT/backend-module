@@ -1,5 +1,5 @@
 import { coerce, object, string } from "zod";
-import { locationSchema } from "../location";
+import { locationSchema } from "./location.schema";
 
 export const deleteCheckpointSchema = object({
   params: object({

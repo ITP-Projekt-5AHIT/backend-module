@@ -1,9 +1,9 @@
 import assert from "assert";
-import { catchPrisma } from "../../middlewares/error";
-import { checkPointType } from "../../types/checkpoint";
-import db from "../../utils/db";
+import { catchPrisma } from "../middlewares/error";
+import { checkPointType } from "../types/checkpoint";
+import db from "../utils/db";
 import dayjs from "dayjs";
-import ApiError from "../../utils/apiError";
+import ApiError from "../utils/apiError";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
 
 const selectedAll = {

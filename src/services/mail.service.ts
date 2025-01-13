@@ -1,6 +1,6 @@
 import Mail from 'nodemailer/lib/mailer';
-import transport from '../../utils/mailer';
-import config from '../../config/config';
+import transport from '../utils/mailer';
+import config from '../config/config';
 
 export const sendMail = async (mailOptions: Mail.Options) => {
   return await transport.sendMail(mailOptions);

@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import catchAsync from "../../utils/catchAsync";
+import catchAsync from "../utils/catchAsync";
 import {
   deleteSubscriptionType,
   deleteTourType,
   loadedTourGuideTours,
   subscribeType,
   tourType,
-} from "../../types/tour";
-import services from "../../services";
+} from "../types/tour";
+import services from "../services";
 import { Account } from "@prisma/client";
 import {
   BAD_REQUEST,
@@ -17,7 +17,7 @@ import {
   OK,
   UNAUTHORIZED,
 } from "http-status";
-import ApiError from "../../utils/apiError";
+import ApiError from "../utils/apiError";
 import assert from "assert";
 
 export const deleteTourSubscription = catchAsync(
