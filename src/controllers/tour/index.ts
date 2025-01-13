@@ -109,7 +109,7 @@ export const postCreateTour = catchAsync(
         JSON.stringify({ tours })
       );
     const tour = await services.tour.createTour(req.body, account.aId);
-    return res.status(CREATED).json(tour);
+    return res.status(CREATED).json({ ...tour, isTourGuide: true });
   }
 );
 
