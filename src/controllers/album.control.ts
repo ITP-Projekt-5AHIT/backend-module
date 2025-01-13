@@ -12,7 +12,7 @@ export const getAlbum = catchAsync(
     const { alId } = req.params;
     const { aId } = req.user as Account;
 
-    const album = await services.album.findAlbumById(Number(alId));
+    const album = await services.album.findAlbumById(alId);
     const tour = await services.tour.loadTourById(album.tId);
 
     const isMember =
