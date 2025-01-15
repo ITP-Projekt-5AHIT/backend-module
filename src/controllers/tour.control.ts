@@ -19,6 +19,21 @@ import {
 } from "http-status";
 import ApiError from "../utils/apiError";
 import assert from "assert";
+import { coordinatesType } from "../types/location";
+
+export const getCoordinates = catchAsync(
+  async (
+    req: Request<object, object, object, coordinatesType>,
+    res: Response,
+    _next: NextFunction
+  ) => {
+    const locationData = req.query;
+
+    const coordinates = await services.loc.getCoordinates(locationData);
+
+    return res.status(OK).json(coordinates);
+  }
+);
 
 export const deleteTourSubscription = catchAsync(
   async (

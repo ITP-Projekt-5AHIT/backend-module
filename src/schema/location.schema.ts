@@ -8,8 +8,35 @@
   routeDescription String?
  */
 
-import { number, object, string } from "zod";
+import { coerce, number, object, string } from "zod";
 import validator from "validator";
+
+export const queryLocationSchema = object({
+  query: object({
+    postCode: number({
+      required_error: "PLZ fehlt",
+      invalid_type_error: "PLZ besitzt den falschen Datentyp (Int)",
+      coerce: true,
+    }),
+    country: string({
+      required_error: "Land fehlt",
+      invalid_type_error: "Land besitzt den falschen Datentyp (String)",
+    }),
+    city: string({
+      required_error: "Stadt fehlt",
+      invalid_type_error: "Stadt besitzt den falschen Datentyp (String)",
+    }),
+    houseNumber: string({
+      required_error: "Hausnummer fehlt",
+      invalid_type_error: "Hausnummer besitzt den falschen Datentyp (String)",
+      coerce: true,
+    }),
+    street: string({
+      message: "Straße fehlt",
+      invalid_type_error: "Straße besitzt den falschen Datentyp (String)",
+    }),
+  }),
+});
 
 export const queryCooridnateSchema = object({
   query: object({

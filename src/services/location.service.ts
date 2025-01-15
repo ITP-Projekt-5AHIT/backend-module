@@ -12,6 +12,39 @@ import { Location } from "@prisma/client";
 import config from "../config/config";
 const client = new Client({});
 
+export const getCoordinates = async ({
+  postCode,
+  country,
+  city,
+  houseNumber,
+  street,
+}: {
+  postCode: number;
+  country: string;
+  city: string;
+  houseNumber: string;
+  street: string;
+}) => {
+  const address = `${street} ${houseNumber}, ${postCode}, ${country}`;
+  const response = await client.geocode({
+    params: {
+      address,
+      key: config.MAPS_API,
+    },
+  });
+
+  assert(
+    response.data?.results?.length > 0,
+    new ApiError(NOT_FOUND, "Keine passende Adresse gefunden")
+  );
+
+  const location = response.data.results[0].geometry.location;
+  return {
+    latitude: location.lat,
+    longitude: location.lng,
+  };
+};
+
 export const findLocationByLId = async (lId: number) => {
   const location = await db.location.findFirst({
     where: {
