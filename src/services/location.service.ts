@@ -6,7 +6,6 @@ import {
   Client,
   Distance,
   Duration,
-  RouteLeg,
   TravelMode,
 } from "@googlemaps/google-maps-services-js";
 import { Location } from "@prisma/client";

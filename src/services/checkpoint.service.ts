@@ -5,28 +5,7 @@ import db from "../utils/db";
 import dayjs from "dayjs";
 import ApiError from "../utils/apiError";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
-
-const selectedAll = {
-  name: true,
-  time: true,
-  isMeetingPoint: true,
-  tourId: true,
-  cId: true,
-  description: true,
-  location: {
-    select: {
-      city: true,
-      lId: true,
-      postCode: true,
-      country: true,
-      street: true,
-      houseNumber: true,
-      latitude: true,
-      longtitude: true,
-      routeDescription: true,
-    },
-  },
-};
+import queries from "../query";
 
 export const deleteCheckpoint = async (cId: number) => {
   await db.checkpoint.delete({
@@ -88,7 +67,7 @@ export const loadCheckPoints = async (tourId: number, limit: number) => {
     orderBy: {
       time: "asc",
     },
-    select: selectedAll,
+    select: queries.cp.checkpointBaseFormat,
   });
   return checkpoints;
 };
@@ -162,7 +141,7 @@ export const createCheckPoint = async (checkpoint: checkPointType) => {
           description: checkpoint.description,
           lId: lId!,
         },
-        select: selectedAll,
+        select: queries.cp.checkpointBaseFormat,
       })
   );
 };

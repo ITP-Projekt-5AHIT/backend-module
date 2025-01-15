@@ -6,52 +6,7 @@ import assert from "assert";
 import ApiError from "../utils/apiError";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
 import { Tour } from "@prisma/client";
-import services from ".";
-
-const selectedAll = {
-  participants: {
-    select: {
-      aId: true,
-      firstName: true,
-      userName: true,
-    },
-  },
-  createdBy: {
-    select: {
-      aId: true,
-      userName: true,
-      firstName: true,
-    },
-  },
-  album: {
-    select: {
-      alId: true,
-    },
-  },
-  checkpoints: {
-    select: {
-      cId: true,
-      name: true,
-      time: true,
-      isMeetingPoint: true,
-      tourId: true,
-      description: true,
-      location: {
-        select: {
-          city: true,
-          lId: true,
-          postCode: true,
-          country: true,
-          street: true,
-          houseNumber: true,
-          latitude: true,
-          longtitude: true,
-          routeDescription: true,
-        },
-      },
-    },
-  },
-};
+import queries from "../query";
 
 export const findAllUserTours = async (aId: number) => {
   const tours = await db.tour.findMany({
@@ -74,7 +29,7 @@ export const findAllUserTours = async (aId: number) => {
     orderBy: {
       startDate: "asc",
     },
-    include: selectedAll,
+    include: queries.tour.tourBaseFormat,
   });
   return tours;
 };
@@ -144,7 +99,7 @@ export const loadTourById = async (tId: number) => {
   );
   const tour = await db.tour.findFirst({
     where: { tId: Number(tId) },
-    include: selectedAll,
+    include: queries.tour.tourBaseFormat,
   });
   assert(tour != null, new ApiError(NOT_FOUND, "Tour konnte nicht gefunden"));
   return tour;
@@ -219,7 +174,7 @@ export const createTour = async (tour: tourType, aId: number) => {
           accessCode: String(tourCode),
           name: tour.name,
         },
-        include: selectedAll,
+        include: queries.tour.tourBaseFormat,
       }),
     new ApiError(
       INTERNAL_SERVER_ERROR,
@@ -284,7 +239,7 @@ export const findActiveOrNextTour = async (aId: number) => {
             },
           ],
         },
-        include: selectedAll,
+        include: queries.tour.tourBaseFormat,
       })
   );
   if (activeTour != null) return activeTour;
@@ -295,7 +250,7 @@ export const findActiveOrNextTour = async (aId: number) => {
         gte: dayjs().toDate(),
       },
     },
-    include: selectedAll,
+    include: queries.tour.tourBaseFormat,
     orderBy: {
       startDate: "asc",
     },
@@ -308,7 +263,7 @@ export const subscribeTour = async (accessCode: string, aId: number) => {
     async () =>
       await db.tour.findFirst({
         where: { accessCode },
-        include: selectedAll,
+        include: queries.tour.tourBaseFormat,
       })
   );
   assert(

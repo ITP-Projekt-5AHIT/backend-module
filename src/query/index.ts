@@ -1,9 +1,9 @@
-import * as checkpointQuerys from "./checkpoint.query";
-import * as tourQuerys from "./tour.query";
+import checkpointQueries from "./checkpoint.query";
+import tourQueries from "./tour.query";
 
 const queries = {
-  cp: checkpointQuerys,
-  tour: tourQuerys,
+  cp: checkpointQueries,
+  tour: tourQueries,
 };
 
 export default queries;
