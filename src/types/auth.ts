@@ -4,7 +4,7 @@ import {
   requestPasswordResetSchema,
   setPasswordSchema,
   signUpSchema,
-} from "../schema/auth";
+} from "../schema/auth.schema";
 
 type signUpSchemaType = typeof signUpSchema.shape.body;
 export type signUpType = Zod.infer<signUpSchemaType>;

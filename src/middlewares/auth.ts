@@ -6,7 +6,7 @@ import {
 import { TOKEN_TYPE, tokenType } from "../types/token";
 import ApiError from "../utils/apiError";
 import httpStatus, { UNAUTHORIZED } from "http-status";
-import * as authService from "../services/auth";
+import * as authService from "../services/auth.service";
 import { NextFunction, Request, Response } from "express";
 import config from "../config/config";
 import passport, { DoneCallback } from "passport";
@@ -27,7 +27,6 @@ const verifyAccessToken = async (payload: tokenType, done: DoneCallback) => {
     const account = await authService.findAccountByPk(
       payload.sub as number
     );
-    console.log(account);
     done(null, account);
   } catch (e) {
     done(e, null);

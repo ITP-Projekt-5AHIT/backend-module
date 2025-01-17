@@ -21,6 +21,6 @@ export const validate =
       );
       return next(error);
     }
-    Object.assign(req.body, parsed.data);
+    Object.assign(req, parsed.data);
     return next();
   };

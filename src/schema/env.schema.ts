@@ -21,4 +21,5 @@ export const envSchema = object({
   NODE_ENV: zod.enum(["production", "development"], {
     message: "NODE_ENV muss angegeben sein",
   }),
+  MAPS_API: string({ message: "Maps-API-KEY fehlt" }),
 });

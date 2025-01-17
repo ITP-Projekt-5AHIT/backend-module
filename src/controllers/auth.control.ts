@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import services from "../../services";
+import services from "../services";
 import {
   loginType,
   passwordResetRequestType,
   passwordSetType,
   renewTokenType,
   signUpType,
-} from "../../types/auth";
+} from "../types/auth";
 import {
   findAccountByCredentials,
   findAccountByUserName,
@@ -15,12 +15,23 @@ import {
   generateTokens,
   handlePasswordReset,
   isValidToken,
-} from "../../services/auth";
-import catchAsync from "../../utils/catchAsync";
-import { sendPwdResetMail } from "../../services/mail/index";
-import { TOKEN_TYPE } from "../../types/token";
+} from "../services/auth.service";
+import catchAsync from "../utils/catchAsync";
+import { sendPwdResetMail } from "../services/mail.service";
+import { TOKEN_TYPE } from "../types/token";
 import { OK } from "http-status";
 import { Account } from "@prisma/client";
+import { omit } from "lodash";
+
+export const getProfileInformation = catchAsync(async (req, res, next) => {
+  const account = req.user as Account;
+  const activeOrNextTour = await services.tour.findActiveOrNextTour(
+    account.aId
+  );
+  return res
+    .status(OK)
+    .json({ ...omit(account, "password"), activeOrNextTour });
+});
 
 export const postSignUp = catchAsync(
   async (

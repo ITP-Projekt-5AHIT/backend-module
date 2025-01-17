@@ -8,6 +8,7 @@
 # CMD ["npm", "run", "dev"]
 FROM node:18-alpine
 WORKDIR /app
+RUN apk add --no-cache openssl
 RUN npm install -g ts-node prisma
 COPY package*.json ./
 RUN npm install

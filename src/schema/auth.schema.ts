@@ -57,10 +57,6 @@ export const signUpSchema = object({
         message: "Das Email-Format ist ungültig",
       }
     ),
-    dateOfBirth: coerce
-      .date({
-        message: "Bitte gib das Datum im gültigen Format ein",
-      }),
     firstName: string({ message: "Vorname muss enthalten sein" })
       .trim()
       .min(2, { message: "Vorname zu kurz" })
