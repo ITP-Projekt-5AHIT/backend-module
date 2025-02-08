@@ -9,7 +9,8 @@ import {
 import { validate } from "../middlewares/validation";
 import isTourGuide from "../middlewares/tour-guide";
 import {
-  queryCooridnateSchema,
+  queryCoordinateSchema,
+  queryDistanceSchema,
   queryLocationSchema,
 } from "../schema/location.schema";
 
@@ -19,8 +20,13 @@ export default router;
 router.get("/all", controllers.tour.getUserAllTours);
 router.get(
   "/distance",
-  [validate(queryCooridnateSchema)],
+  [validate(queryDistanceSchema)],
   controllers.tour.getDistance
+);
+router.get(
+  "/attractions",
+  [validate(queryCoordinateSchema)],
+  controllers.tour.getAttractions
 );
 router.get(
   "/coordinates",

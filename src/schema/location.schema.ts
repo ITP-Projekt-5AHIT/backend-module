@@ -38,11 +38,21 @@ export const queryLocationSchema = object({
   }),
 });
 
-export const queryCooridnateSchema = object({
+export const queryDistanceSchema = object({
   query: object({
     longtitude: number({ message: "Longtitude fehlt" }),
     latitude: number({ message: "Latitude fehlt" }),
     lId: number({ message: "Location-Id fehlt" }),
+  }).refine(
+    (data) => validator.isLatLong(`${data.latitude}, ${data.longtitude}`),
+    { message: "Koordinaten-Format ist nicht gültig" }
+  ),
+});
+
+export const queryCoordinateSchema = object({
+  query: object({
+    longtitude: number({ message: "Longtitude fehlt" }),
+    latitude: number({ message: "Latitude fehlt" }),
   }).refine(
     (data) => validator.isLatLong(`${data.latitude}, ${data.longtitude}`),
     { message: "Koordinaten-Format ist nicht gültig" }

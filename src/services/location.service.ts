@@ -10,7 +10,33 @@ import {
 } from "@googlemaps/google-maps-services-js";
 import { Location } from "@prisma/client";
 import config from "../config/config";
+import { Place } from "../types/location";
 const client = new Client({});
+
+export const getNearbyAttractions = async (
+  lat: number,
+  lng: number
+): Promise<Place[]> => {
+  const response = await client.placesNearby({
+    params: {
+      location: { lat, lng },
+      radius: 5000,
+      type: 'tourist_attraction',
+      key: config.MAPS_API,
+    },
+  });
+
+  return response.data.results.slice(0, 20).map((place: any) => ({
+    name: place.name,
+    address: place.vicinity,
+    rating: place.rating,
+    types: place.types,
+    userRatingsTotal: place.user_ratings_total,
+    openingHours: place.opening_hours?.open_now,
+    latitude: place.geometry.location.lat,
+    longitude: place.geometry.location.lng,
+  }));
+};
 
 export const getCoordinates = async ({
   postCode,

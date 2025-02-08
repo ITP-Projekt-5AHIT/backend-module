@@ -21,6 +21,26 @@ import ApiError from "../utils/apiError";
 import assert from "assert";
 import { coordinatesType } from "../types/location";
 
+export const getAttractions = catchAsync(
+  async (
+    req: Request<
+      object,
+      object,
+      object,
+      { longtitude: number; latitude: number }
+    >,
+    res: Response,
+    _next: NextFunction
+  ) => {
+    const { latitude, longtitude } = req.query;
+    const attractions = await services.loc.getNearbyAttractions(
+      latitude,
+      longtitude
+    );
+    return res.status(OK).json(attractions);
+  }
+);
+
 export const getCoordinates = catchAsync(
   async (
     req: Request<object, object, object, coordinatesType>,
