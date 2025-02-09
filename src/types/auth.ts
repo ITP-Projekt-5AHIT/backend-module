@@ -4,6 +4,7 @@ import {
   requestPasswordResetSchema,
   setPasswordSchema,
   signUpSchema,
+  updateProfileSchema,
 } from "../schema/auth.schema";
 
 type signUpSchemaType = typeof signUpSchema.shape.body;
@@ -20,3 +21,6 @@ export type passwordSetType = Zod.infer<passwordSet>;
 
 type renewToken = typeof renewTokenSchema.shape.body;
 export type renewTokenType = Zod.infer<renewToken>;
+
+type profileUpdateBody = typeof updateProfileSchema.shape.body;
+export type profileUpdateType = Zod.infer<profileUpdateBody>;

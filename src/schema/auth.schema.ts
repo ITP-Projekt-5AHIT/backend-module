@@ -29,6 +29,38 @@ export const renewTokenSchema = object({
   }),
 });
 
+export const updateProfileSchema = object({
+  body: object({
+    userName: string({
+      message: "Username invalid",
+    })
+      .optional()
+      .nullable(),
+    email: string({
+      message: "Email invalid",
+    })
+      .optional()
+      .nullable()
+      .refine(
+        (e) => {
+          if (e) return validator.isEmail(e);
+          return true;
+        },
+        { message: "Email has invalid format" }
+      ),
+    firstName: string({
+      message: "Name invalid",
+    })
+      .optional()
+      .nullable(),
+  }).refine(
+    (data) => {
+      return data.email || data.firstName || data.userName;
+    },
+    { message: "Minimum one change required" }
+  ),
+});
+
 export const loginSchema = object({
   body: object({
     userName: string({ message: "Bitte gib einen Usernamen ein" }),

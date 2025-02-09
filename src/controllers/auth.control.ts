@@ -4,6 +4,7 @@ import {
   loginType,
   passwordResetRequestType,
   passwordSetType,
+  profileUpdateType,
   renewTokenType,
   signUpType,
 } from "../types/auth";
@@ -22,6 +23,25 @@ import { TOKEN_TYPE } from "../types/token";
 import { OK } from "http-status";
 import { Account } from "@prisma/client";
 import { omit } from "lodash";
+
+export const putUpdateProfile = catchAsync(
+  async (req: Request<object, object, profileUpdateType>, res, _next) => {
+    const { email, firstName, userName } = req.body;
+    const { aId } = req.user as Account;
+
+    const updateData = Object.entries({ email, firstName, userName }).reduce(
+      (acc, [key, value]) => {
+        if (value) acc[key as keyof typeof acc] = value;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+
+    await services.auth.updateProfile(aId, updateData);
+
+    return res.status(OK).json({});
+  }
+);
 
 export const getProfileInformation = catchAsync(async (req, res, next) => {
   const account = req.user as Account;

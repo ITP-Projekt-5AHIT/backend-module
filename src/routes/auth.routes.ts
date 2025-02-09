@@ -7,6 +7,7 @@ import {
   requestPasswordResetSchema,
   setPasswordSchema,
   signUpSchema,
+  updateProfileSchema,
 } from "../schema/auth.schema";
 import { auth } from "../middlewares/auth";
 
@@ -30,5 +31,10 @@ router.post(
   [validate(renewTokenSchema)],
   controllers.auth.postRenewToken
 );
-router.post('/logout', [auth], controllers.auth.postLogout);
-router.get('/profile', [auth], controllers.auth.getProfileInformation);
+router.post("/logout", [auth], controllers.auth.postLogout);
+router.get("/profile", [auth], controllers.auth.getProfileInformation);
+router.put(
+  "/profile",
+  [auth, validate(updateProfileSchema)],
+  controllers.auth.putUpdateProfile
+);

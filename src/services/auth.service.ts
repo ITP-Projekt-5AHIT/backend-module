@@ -12,6 +12,19 @@ import { catchPrisma } from "../middlewares/error";
 import { NOT_FOUND, TOO_MANY_REQUESTS } from "http-status";
 import { omit } from "lodash";
 
+export const updateProfile = async (
+  aId: number,
+  data: Record<string, string>
+) => {
+  const acc = await db.account.update({
+    where: {
+      aId,
+    },
+    data,
+  });
+  return acc;
+};
+
 export const findAccountByPk = async (aId: number) => {
   const foundAccount = await db.account.findFirst({
     where: {
