@@ -4,6 +4,7 @@ import * as checkPointService from "./checkpoint.service";
 import * as locationService from "./location.service";
 import * as mailService from "./mail.service";
 import * as albumService from "./album.service";
+import * as paymentService from "./payment.service";
 
 export default {
   auth: authService,
@@ -12,4 +13,5 @@ export default {
   loc: locationService,
   mail: mailService,
   album: albumService,
+  payment: paymentService,
 };

@@ -22,4 +22,5 @@ export const envSchema = object({
     message: "NODE_ENV muss angegeben sein",
   }),
   MAPS_API: string({ message: "Maps-API-KEY fehlt" }),
+  STRIPE_API: string({ message: "STRIPE-API-KEY fehlt" }),
 });

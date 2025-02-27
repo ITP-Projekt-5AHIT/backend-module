@@ -7,6 +7,7 @@ import { auth } from "../middlewares/auth";
 import isTourGuide from "../middlewares/tour-guide";
 import ApiError from "../utils/apiError";
 import { NOT_FOUND } from "http-status";
+import premiumRoutes from "./premium.routes";
 
 const router = express.Router();
 export default router;
@@ -15,6 +16,7 @@ router.use("/auth", authRoutes);
 router.use("/tour", [auth], tourRoutes);
 router.use("/checkpoint", [auth, isTourGuide], checkPointRoutes);
 router.use("/album", [auth], albumRoutes);
+router.use("/premium", [auth], premiumRoutes);
 router.use("*", (_req, _res, next: NextFunction) =>
   next(new ApiError(NOT_FOUND, "Route nicht gefunden"))
 );
