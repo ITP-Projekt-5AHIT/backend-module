@@ -12,6 +12,7 @@ model Account {
   userName  String   @unique
   email     String   @unique
   password  String
+  customer  String?
   firstName String   @default("Max")
   lastName  String   @default("Mustermann")
   timestamp DateTime @default(now())
