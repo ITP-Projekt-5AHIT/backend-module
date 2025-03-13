@@ -5,6 +5,7 @@ import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from "@prisma/client/runtime/library";
+import logger from "../config/logger";
 
 const catchAsync =
   (
@@ -15,7 +16,8 @@ const catchAsync =
     ) => void
   ) =>
   (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch((err: ApiError | Error) =>
+    Promise.resolve(fn(req, res, next)).catch((err: ApiError | Error) => {
+      logger.error(err.message);
       next(
         !(
           err instanceof ApiError ||
@@ -27,8 +29,8 @@ const catchAsync =
               "Controller has received an unhandled exception"
             )
           : err
-      )
-    );
+      );
+    });
   };
 
 export default catchAsync;
