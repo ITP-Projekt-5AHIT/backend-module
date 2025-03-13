@@ -10,10 +10,7 @@ export const postSubscribePremium = catchAsync(
     //TODO: check if premium subscribed
 
     const customer = await services.payment.createCustomer(aId);
-    const intent = await services.payment.createPaymentIntent(
-      customer.customer.id,
-      12
-    );
+    const intent = await services.payment.createPaymentIntent(customer, 1200);
 
     return res.status(OK).json({ secret: intent.client_secret });
   }

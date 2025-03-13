@@ -12,23 +12,23 @@ export const createCustomer = async (aId: number) => {
 
   assert(account, new ApiError(NOT_FOUND, "Account not found"));
 
+  if (account.customer) return account.customer;
+
   const params: Stripe.CustomerCreateParams = {
     email: account.email,
     name: `${account.firstName} ${account.lastName}`,
   };
 
-  const customer = await stripeProvider.customers.create(params);
-
-  return { account, customer };
+  return (await stripeProvider.customers.create(params)).id;
 };
 
 export const createPaymentIntent = async (
   customerId: string,
-  amount: number
+  amountInCents: number
 ) => {
   const paymentIntentParams: Stripe.PaymentIntentCreateParams = {
     customer: customerId,
-    amount,
+    amount: amountInCents,
     currency: "EUR",
   };
 
