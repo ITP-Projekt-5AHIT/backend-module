@@ -10,6 +10,7 @@ export type Place = {
   types: string[];
   userRatingsTotal?: number;
   openingHours?: boolean;
-  latitude: number;
-  longitude: number;
+  latitude: number | undefined;
+  longitude: number | undefined;
+  image: string | undefined;
 };

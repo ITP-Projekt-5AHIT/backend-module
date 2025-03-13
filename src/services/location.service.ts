@@ -21,21 +21,24 @@ export const getNearbyAttractions = async (
     params: {
       location: { lat, lng },
       radius: 5000,
-      type: 'tourist_attraction',
+      type: "tourist_attraction",
       key: config.MAPS_API,
     },
   });
 
-  return response.data.results.slice(0, 20).map((place: any) => ({
+  return response.data.results.slice(0, 20).map((place) => ({
     name: place.name,
     address: place.vicinity,
     rating: place.rating,
     types: place.types,
     userRatingsTotal: place.user_ratings_total,
     openingHours: place.opening_hours?.open_now,
-    latitude: place.geometry.location.lat,
-    longitude: place.geometry.location.lng,
-  }));
+    latitude: place?.geometry?.location.lat,
+    longitude: place?.geometry?.location.lng,
+    image: place.photos?.[0]
+      ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photos[0].photo_reference}&key=${config.MAPS_API}`
+      : null,
+  })) as Place[];
 };
 
 export const getCoordinates = async ({
