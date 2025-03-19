@@ -134,7 +134,7 @@ export const findAccountByUserName = async (userName: string) => {
       userName: userName,
     },
   });
-  assert(found != null, new ApiError(404, "Account wurde nicht gefunden"));
+  assert(found != null, new ApiError(404, `No user with ${userName} found`));
   return found;
 };
 
