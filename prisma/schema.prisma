@@ -32,6 +32,7 @@ model Tip {
   from      Account  @relation("givenTips", references: [aId], fields: [fromAId], onDelete: Restrict)
   to        Account  @relation("receivedTips", fields: [toAId], references: [aId], onDelete: Restrict)
   timestamp DateTime @default(now())
+  paymentId String
   text      String?
 }
 

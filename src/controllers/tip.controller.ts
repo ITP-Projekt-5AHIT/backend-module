@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { tipType } from "../types/tip";
+import { tipType, verifyTipType } from "../types/tip";
 import catchAsync from "../utils/catchAsync";
 import { Account } from "@prisma/client";
 import services from "../services";
 import { PaymentMetadata } from "../types/payment";
-import { randomUUID } from "crypto";
 import { CREATED } from "http-status";
 
 export const postTip = catchAsync(
@@ -26,15 +25,35 @@ export const postTip = catchAsync(
       reason: `${text}`,
       recipient: target.aId,
     };
-
     const payment = await services.payment.createPaymentIntent(
       customerId,
-      amount,
+      amount * 100.0,
       metadata
     );
 
     return res
       .status(CREATED)
       .json({ secret: payment.client_secret, id: payment.id });
+  }
+);
+
+export const postVerifyTip = catchAsync(
+  async (
+    req: Request<object, object, verifyTipType>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { id } = req.body;
+    const { aId } = req.user as Account;
+
+    const customerId = await services.payment.createCustomer(aId);
+    // if payment was not successful, error is thrown
+    await services.tip.verifyTipPlaced(id, customerId);
+
+    const tip = await services.tip.createTip(aId, id);
+
+    return res
+      .status(CREATED)
+      .json({ message: "Thank you for your generosity", tip });
   }
 );

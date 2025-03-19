@@ -13,3 +13,9 @@ export const tipSchema = object({
     text: string({ message: "Text invalid" }).nullable(),
   }),
 });
+
+export const verifyTipSchema = object({
+  body: object({
+    id: string({ message: "Id invalid" }),
+  }),
+});
