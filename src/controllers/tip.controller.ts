@@ -4,7 +4,9 @@ import catchAsync from "../utils/catchAsync";
 import { Account } from "@prisma/client";
 import services from "../services";
 import { PaymentMetadata } from "../types/payment";
-import { CREATED, OK } from "http-status";
+import { BAD_GATEWAY, BAD_REQUEST, CREATED, OK } from "http-status";
+import ApiError from "../utils/apiError";
+import assert from "assert";
 
 export const postTip = catchAsync(
   async (
@@ -13,8 +15,12 @@ export const postTip = catchAsync(
     _next: NextFunction
   ) => {
     const { amount, userName, text } = req.body;
-    const { aId } = req.user as Account;
+    const { aId, userName: ownUserName } = req.user as Account;
 
+    assert(
+      userName !== ownUserName,
+      new ApiError(BAD_REQUEST, "Tipping to yourself not allowed")
+    );
     const customerId = await services.payment.createCustomer(aId);
 
     // simultaneously checks whether the user name is valid
