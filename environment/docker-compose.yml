@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgresdb:
+    image: postgres:latest
+    container_name: postgresdb
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Password123!
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres_data:
