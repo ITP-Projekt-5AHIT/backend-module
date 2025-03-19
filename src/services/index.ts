@@ -5,6 +5,7 @@ import * as locationService from "./location.service";
 import * as mailService from "./mail.service";
 import * as albumService from "./album.service";
 import * as paymentService from "./payment.service";
+import * as premiumService from "./premium.service";
 
 export default {
   auth: authService,
@@ -14,4 +15,5 @@ export default {
   mail: mailService,
   album: albumService,
   payment: paymentService,
+  premium: premiumService,
 };

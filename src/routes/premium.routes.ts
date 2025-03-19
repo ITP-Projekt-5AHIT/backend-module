@@ -1,8 +1,9 @@
 import { Router } from "express";
 import controllers from "../controllers";
-import { isPremium } from "../middlewares/premium";
 
 const router = Router();
 export default router;
 
-router.post("/", controllers.premium.postSubscribePremium);
+router.get("/", controllers.premium.getSubscribePremium);
+// verify payment gone through
+router.post("/", controllers.premium.postVerifyPremium);
