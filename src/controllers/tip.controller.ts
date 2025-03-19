@@ -4,7 +4,7 @@ import catchAsync from "../utils/catchAsync";
 import { Account } from "@prisma/client";
 import services from "../services";
 import { PaymentMetadata } from "../types/payment";
-import { CREATED } from "http-status";
+import { CREATED, OK } from "http-status";
 
 export const postTip = catchAsync(
   async (
@@ -41,7 +41,7 @@ export const postVerifyTip = catchAsync(
   async (
     req: Request<object, object, verifyTipType>,
     res: Response,
-    next: NextFunction
+    _next: NextFunction
   ) => {
     const { id } = req.body;
     const { aId } = req.user as Account;
@@ -55,5 +55,14 @@ export const postVerifyTip = catchAsync(
     return res
       .status(CREATED)
       .json({ message: "Thank you for your generosity", tip });
+  }
+);
+
+export const getTips = catchAsync(
+  async (req: Request, res: Response, _next: NextFunction) => {
+    const { aId } = req.user as Account;
+    const tips = await services.tip.getTipsByCId(aId);
+
+    return res.status(OK).json(tips);
   }
 );

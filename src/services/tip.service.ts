@@ -5,6 +5,7 @@ import { BAD_REQUEST, NOT_FOUND } from "http-status";
 import db from "../utils/db";
 import { PaymentMetadata } from "../types/payment";
 import services from ".";
+import { omit } from "lodash";
 
 const getPaymentById = async (id: string) => {
   const payment = await stripe.paymentIntents.retrieve(id);
@@ -63,4 +64,25 @@ export const createTip = async (fromAId: number, paymentId: string) => {
       paymentId,
     },
   });
+};
+
+export const getTipsByCId = async (aId: number) => {
+  const tips = await db.tip.findMany({
+    where: {
+      OR: [{ toAId: aId }, { fromAId: aId }],
+    },
+    orderBy: [{ timestamp: "desc" }],
+    include: {
+      from: { select: { userName: true } },
+      to: { select: { userName: true } },
+    },
+  });
+
+  const receivedTips = tips.filter((tip) => tip.toAId === aId);
+  const givenTips = tips.filter((tip) => tip.fromAId === aId);
+
+  return {
+    receivedTips,
+    givenTips,
+  };
 };

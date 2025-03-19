@@ -12,3 +12,4 @@ router.post(
   validate(verifyTipSchema),
   controllers.tip.postVerifyTip
 );
+router.get('/', controllers.tip.getTips);
