@@ -3,15 +3,33 @@ import stripe from "../config/stripe";
 import ApiError from "../utils/apiError";
 import { BAD_REQUEST, NOT_FOUND } from "http-status";
 import db from "../utils/db";
-import { PaymentMetadata } from "../types/payment";
 import services from ".";
-import { omit } from "lodash";
 
 const getPaymentById = async (id: string) => {
   const payment = await stripe.paymentIntents.retrieve(id);
   assert(payment, new ApiError(NOT_FOUND, "Payment not found"));
 
   return payment;
+};
+
+export const calcPayoutAmount = async (aId: number): Promise<number> => {
+  const tips = await db.tip.aggregate({
+    where: { toAId: aId },
+    _sum: {
+      amount: true,
+    },
+  });
+  const payoutSum = await db.payout.aggregate({
+    where: { aId },
+    _sum: {
+      amount: true,
+    },
+  });
+
+  const balance = (tips._sum.amount ?? 0) as number;
+  const payouts = (payoutSum._sum.amount ?? 0) as number;
+
+  return balance - payouts;
 };
 
 export const verifyTipPlaced = async (
@@ -26,7 +44,7 @@ export const verifyTipPlaced = async (
   const debtorCorrect = payment.customer === fromCustomerId;
   assert(debtorCorrect, new ApiError(BAD_REQUEST, "Not your payment"));
 
-  const createdYet = db.tip.findFirst({
+  const createdYet = await db.tip.findFirst({
     where: { paymentId: id },
   });
   assert(!createdYet, new ApiError(BAD_REQUEST, "Payment already processed"));

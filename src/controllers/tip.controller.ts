@@ -4,9 +4,30 @@ import catchAsync from "../utils/catchAsync";
 import { Account } from "@prisma/client";
 import services from "../services";
 import { PaymentMetadata } from "../types/payment";
-import { BAD_GATEWAY, BAD_REQUEST, CREATED, OK } from "http-status";
+import { BAD_REQUEST, CREATED, OK } from "http-status";
 import ApiError from "../utils/apiError";
 import assert from "assert";
+
+export const getPayout = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { aId } = req.user as Account;
+    const payoutSum = await services.tip.calcPayoutAmount(aId);
+
+    assert(
+      payoutSum > 5,
+      new ApiError(BAD_REQUEST, "Auszahlungen unter 5 Euro nicht genehmigt")
+    );
+
+    const hasStripeAccount = await services.payment.hasStripeConnectAccount(
+      aId
+    );
+    if (!hasStripeAccount) await services.payment.createAccount(aId);
+
+    const payout = await services.payment.createPayout(aId, payoutSum);
+
+    return res.json({ payout });
+  }
+);
 
 export const postTip = catchAsync(
   async (

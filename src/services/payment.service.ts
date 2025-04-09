@@ -1,10 +1,75 @@
 import assert from "assert";
 import db from "../utils/db";
 import ApiError from "../utils/apiError";
-import { NOT_FOUND } from "http-status";
+import { INTERNAL_SERVER_ERROR, NOT_FOUND } from "http-status";
 import Stripe from "stripe";
 import stripe from "../config/stripe";
 import { PaymentMetadata } from "../types/payment";
+
+export const createPayout = async (aId: number, amount: number) => {
+  const account = await db.account.findFirst({ where: { aId } });
+  assert(
+    account?.stripeAccId,
+    new ApiError(
+      INTERNAL_SERVER_ERROR,
+      "Kein existierender Stripe Connect Account gefunden"
+    )
+  );
+  const stripeAccount = await stripe.accounts.retrieve(account?.stripeAccId);
+  // create payout for 'stripeAccount'
+  const payout = await stripe.payouts.create(
+    {
+      amount: amount * 100,
+      currency: "EUR",
+    },
+    { stripeAccount: stripeAccount.id }
+  );
+
+  await db.payout.create({
+    data: {
+      amount,
+      paymentId: payout.id,
+      aId,
+    },
+  });
+
+  return payout;
+};
+
+export const hasStripeConnectAccount = async (aId: number) => {
+  const account = await db.account.findFirst({ where: { aId } });
+  return account && account.stripeAccId !== null;
+};
+
+/**
+ * Stripe connect account for payouts
+ * @param aId user id
+ * @returns Stripe connect account
+ */
+export const createAccount = async (aId: number) => {
+  const account = await db.account.findUnique({ where: { aId } });
+  assert(account, new ApiError(NOT_FOUND, "Account wurde nicht gefunden"));
+
+  if (account.stripeAccId) return account.stripeAccId;
+
+  const stripeAccount = await stripe.accounts.create({
+    email: account.email,
+    default_currency: "EUR",
+    type: "express",
+    capabilities: { transfers: { requested: true } },
+  });
+
+  await db.account.update({
+    where: {
+      aId,
+    },
+    data: {
+      stripeAccId: stripeAccount.id,
+    },
+  });
+
+  return stripeAccount;
+};
 
 export const createCustomer = async (aId: number) => {
   const account = await db.account.findFirst({

@@ -13,3 +13,4 @@ router.post(
   controllers.tip.postVerifyTip
 );
 router.get('/', controllers.tip.getTips);
+router.get('/payout/', controllers.tip.getPayout);

@@ -8,3 +8,4 @@ export default router;
 
 router.post("/", [validate(postImageSchema)], controllers.album.postAddImage);
 router.get("/:alId", [validate(getAlbumSchema)], controllers.album.getAlbum);
+router.get('/', controllers.album.getAllAlbums);

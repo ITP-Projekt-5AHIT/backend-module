@@ -5,7 +5,7 @@ import services from "../services";
 import assert from "assert";
 import { Account } from "@prisma/client";
 import ApiError from "../utils/apiError";
-import { BAD_REQUEST, OK, UNAUTHORIZED } from "http-status";
+import { BAD_REQUEST, FORBIDDEN, OK, UNAUTHORIZED } from "http-status";
 
 export const getAlbum = catchAsync(
   async (req: Request<getAlbumType>, res: Response, next: NextFunction) => {
@@ -58,5 +58,17 @@ export const postAddImage = catchAsync(
     const updated = await services.album.addImage(tId, fileName);
 
     return res.status(OK).json(updated);
+  }
+);
+
+export const getAllAlbums = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { aId } = req.user as Account;
+    const account = await services.auth.findAccountByPk(aId);
+    assert(account, new ApiError(FORBIDDEN, "Kein Account gefunden"));
+
+    const albums = await services.album.getAllAlbums(aId);
+
+    return res.status(OK).json(albums);
   }
 );

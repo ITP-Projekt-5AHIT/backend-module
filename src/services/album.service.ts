@@ -51,3 +51,31 @@ export const createTourAlbum = async (tId: number) => {
     },
   });
 };
+
+export const getAllAlbums = async (aId: number) => {
+  const albums = await db.album.findMany({
+    where: {
+      tour: {
+        OR: [{ createdBy: { aId } }, { participants: { some: { aId } } }],
+      },
+    },
+    include: {
+      tour: true,
+    },
+  });
+
+  albums[0].createdAt;
+
+  return albums.map((album) => ({
+    name: `Album - ${album.tour.name}`,
+    timestamp: album.createdAt,
+    tId: album.tId,
+    albumId: album.alId,
+    tour: {
+      name: album.tour.name,
+      startsAt: album.tour.startDate,
+      endsAt: album.tour.endDate,
+    },
+    images: album.photos,
+  }));
+};

@@ -13,6 +13,7 @@ model Account {
   email        String   @unique
   password     String
   customer     String?
+  stripeAccId  String?
   firstName    String   @default("Max")
   lastName     String   @default("Mustermann")
   timestamp    DateTime @default(now())
@@ -22,6 +23,7 @@ model Account {
   hasPremium   Boolean  @default(false)
   givenTips    Tip[]    @relation("givenTips")
   receivedTips Tip[]    @relation("receivedTips")
+  payouts      Payout[]
 }
 
 model Tip {
@@ -34,6 +36,15 @@ model Tip {
   timestamp DateTime @default(now())
   paymentId String
   text      String?
+}
+
+model Payout {
+  pId       Int      @id @unique @default(autoincrement())
+  amount    Decimal
+  aId       Int
+  account   Account  @relation(references: [aId], fields: [aId], onDelete: Cascade)
+  timestamp DateTime @default(now())
+  paymentId String
 }
 
 model Token {
