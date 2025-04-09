@@ -5,7 +5,7 @@ import services from "../services";
 import assert from "assert";
 import { Account } from "@prisma/client";
 import ApiError from "../utils/apiError";
-import { OK, UNAUTHORIZED } from "http-status";
+import { BAD_REQUEST, OK, UNAUTHORIZED } from "http-status";
 
 export const getAlbum = catchAsync(
   async (req: Request<getAlbumType>, res: Response, next: NextFunction) => {
@@ -36,8 +36,11 @@ export const postAddImage = catchAsync(
     next: NextFunction
   ) => {
     const { aId } = req.user as Account;
-    const { fileName, tId } = req.body;
-    const tour = await services.tour.loadTourById(tId);
+    const { fileName } = req.body;
+    const tour = await services.tour.findActiveUserTour(aId);
+
+    assert(tour, new ApiError(BAD_REQUEST, "Keine aktuelle Tour"));
+    const { tId } = tour;
 
     const isMember =
       tour.tourGuide == aId || tour.participants.some((p) => p.aId == aId);
@@ -52,10 +55,7 @@ export const postAddImage = catchAsync(
     const isAlbumPresent = tour.album?.alId != null;
     if (!isAlbumPresent) await services.album.createTourAlbum(tId);
 
-    const albId = tour.album?.alId!;
-
-    await services.album.findAlbumById(albId);
-    const updated = await services.album.addImage(albId, fileName);
+    const updated = await services.album.addImage(tId, fileName);
 
     return res.status(OK).json(updated);
   }

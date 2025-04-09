@@ -6,12 +6,7 @@ export const postImageSchema = object({
       .min(10, {
         message: "Filename zu kurz",
       })
-      .max(128, { message: "Filename zu lang" }),
-    tId: number({ message: "Tour-Id fehlt" })
-      .min(0, {
-        message: "Tour-Id muss positiv sein",
-      })
-      .max(Number.MAX_VALUE, "Tour-Id zu groß"),
+      .max(128, { message: "Filename zu lang" })
   }),
 });
 

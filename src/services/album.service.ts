@@ -4,7 +4,7 @@ import ApiError from "../utils/apiError";
 import { CONFLICT, NOT_FOUND } from "http-status";
 
 export const findAlbumById = async (alId: number) => {
-  const album = await db.album.findUnique({
+  const album = await db.album.findFirst({
     where: {
       alId,
     },
@@ -13,10 +13,10 @@ export const findAlbumById = async (alId: number) => {
   return album;
 };
 
-export const addImage = async (alId: number, fileName: string) => {
+export const addImage = async (tId: number, fileName: string) => {
   const album = await db.album.update({
     where: {
-      alId,
+      tId,
     },
     data: {
       photos: {
